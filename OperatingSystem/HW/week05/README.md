@@ -169,6 +169,31 @@
 
 ### HW4-1. Make a system call that, when called, displays all ancestor processes of the calling process in the system. For example, if ex1 calls this system call, you should see: ex1, ex1’parent, ex1’s parent’s parent, etc. until you reach pid=0 which is Linux itself.
 
+> **Idea**
+> 
+> 현재 프로세스의 Process Descriptor를 담고있는 포인터는 `current`이다.
+>
+> 따라서 current의 Parent Process를 `pid==0`이 될 때까지 거슬러 올라가며 Process Descriptor의 이름을 를 출력하도록 구현하면 될 것이다.
+>
+> ---
+> **Code**
+> 
+> 1. Parent Process Desciptor를 반복하여 호출하는 함수를 구현한다.<br>
+>   ![Alt text](Image/week05_HW4_5.png)
+> 
+> 2. 해당 함수를 System Call에 등록한다.<br>
+>   ![Alt text](Image/week05_HW4_6.png)
+>
+> 3. 이 System Call을 호출하는 C프로그램을 구현한다.<br>
+>   ![Alt text](Image/week05_HW4_7.png)
+> 
+> ---
+> **Result**
+>
+> ![Alt text](Image/week05_HW4_8.png)
+
+
+
 ---
 ## HW5. Run three user programs, f1, f2, and f3, and run another program that calls the the system call in Problem 3.4) as follows. State 0 means runnable and 1 means blocked. Observe the state changes in f1, f2, f3 and explain what these changes mean
 
@@ -242,6 +267,3 @@
 > **Result**
 >
 > 각 프로세스의 Time Slice가 계속 줄어드는 것을 확인할 수 있다.
-> ![Alt text](image.png)
-> ![Alt text](image-1.png)
-> ![Alt text](image-2.png)
