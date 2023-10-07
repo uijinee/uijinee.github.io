@@ -3,6 +3,7 @@
 > 우선 Linux 2.6은 0번부터 326까지 총 327개의 system call을 지원한다.
 > 
 > 이는 `arch/x86/kernel/syscall_table_32.S`를 직접 확인해 보면 알 수 있다. 
+>
 > ![Alt text](Image/week04_HW7_1.png)<br>
 > ...
 > ![Alt text](Image/week04_HW7_2.png)<br>
@@ -151,57 +152,64 @@ syscall(4, 1, "hi", 2); // 4 is the system call number for "write" system call
 > ---
 > **Code**
 >
-> 1. `arch/x86/kernel/syscall_table_32.S`에 주어진 system call number를 출력하는 함수명 정의<br>
-> ![Alt text](Image/week04_HW11_1.png)
+> 1. `arch/x86/kernel/syscall_table_32.S`에 주어진 system call number를 출력하는 함수와 출력 여부를 결정하는 함수명 정의<br>
+>   \<my_syscall_displayNum\><br>
+>   ![Alt text](Image/week04_HW11_1.png)<br>
+>   \<my_syscall_setDisplay\><br>
+>   ![Alt text](Image/week04_HW11_2.png)
 >
-> 2. `fs/read_write.c`에 해당 함수 구현<br>
-> ![Alt text](Image/week04_HW11_2.png)
+> 2. `fs/read_write.c`에 해당 함수들 구현<br>
+>   ![Alt text](Image/week04_HW11_6.png)
 >
-> 3. `arch/x86/kernel/entry_32.S` 수정<br>
-> ![Alt text](Image/week04_HW11_3.png)
+> 3. `arch/x86/kernel/entry_32.S` 수정 (in `Entry(system_call)` & `Entry(system_call)`)<br>
+>   \<Entry(system_call)부분\><br>
+>   ![Alt text](Image/week04_HW11_3.png)<br>
+>   \<Entry(ia32_sysenter_target)부분\><br>
+>   ![Alt text](Image/week04_HW11_7.png)
 >
-> 4. Recompile and Reboot<br>
-> ![Alt text](Image/week04_HW10-1_3.png)
+> 4. Recompile and Reboot
 >
 > ---
 > **Result**
 >
 > ![Alt text](Image/week04_HW11_4.png)
 >
-> 위와 같은 코드를 작성한 후,
+> 위와 같은 코드를 작성한 후<br>
+> 마찬가지로 printk로 출력하는 내용을 볼 수 있도록 log level을 바꿔준다. <br>
+> 마지막으로 해당 C프로그램을 실행해 본다.
 >
 > ![Alt text](Image/week04_HW11_5.png)
 > 
-> 마찬가지로 printk로 출력하는 내용을 볼 수 있도록 log level을 바꿔준다.
-> 
-> ![Alt text](Image/week04_HW11_6.png)
-> 
-> 그 결과 `hello`를 출력하기 까지 필요한 system call의 number를 모두 확인할 수 있다.
+> 그 결과 위와 같이 `hello`를 출력하기 까지 필요한 system call의 number를 모두 확인할 수 있다.
 >
 > ---
 > **Explain**
 >
-> 3(sys_read): 파일이나 다른 입력 소스에서 데이터를 읽음<br>
-> 5(sys_open): 파일을 열 때 사용<br>
-> 6(sys_close): 파일 디스크립터를 닫음<br>
-> 33(sys_access): 파일이나 디렉터리에 대한 접근 권한을 확인하는 데 사용<br>
-> 45(sys_brk): 프로세스의 메모리 공간을 동적으로 확장 또는 축소하기 위해 사용<br>
-> 91(sys_munmap): 메모리 매핑을 해제하는 시스템 호출<br>
-> 119(sys_sigreturn): 시그널 핸들러에서 복귀<br>
-> 125(sys_mprotect): 메모리 보호 속성을 변경<br>
-> 192(sys_mmap2): 파일을 메모리에 매핑<br>
-> 197(sys_fstat64): 파일의 메타정보를 가져올 때 사용<br>
-> 243(sys_set_thread_area): 스레드의 관련 정보를 설정<br>
+> - **4(sys_write)** <br>
+>   : 파일이나 소켓에 데이터를 쓰는 시스템 콜 <br>
+>   <u>(user space에서 kernel space로 데이터를 전송하는 역할)</u>
+> - **54(sys_ioctl)** <br>
+>   : 입출력 장치 및 파일 디스크립터에 대한 제어 명령을 수행하는 시스템 콜 <br>
+>    <u>(특정 장치의 속성을 설정하거나 정보를 얻을 때 사용)</u>
+> - **192(sys_mmap2)**<br>
+>   : 파일이나 장치를 메모리에 매핑하는 시스템 콜<br>
+>   <u>(파일을 메모리에 로드하거나 특정 주소 공간을 파일과 연결하는 데 사용)</u>
+> - **197(sys_fstat64)**<br>
+>   : 파일의 메타정보를 가져올 때 사용<br>
+>    <u>(파일 크기, 소유자, 권한 등과 같은 파일의 메타데이터를 반환)</u>
+>
+> *(35번 system call은 우리가 syscall number의 출력 여부를 결정하기 위해서 새롭게 정의해준 system call이었다.)*
 
 ---
 ## HW12. What system calls are being called when you remove a file? Use "system()" function to run a Linux command as below. Explain what each system call is doing. You need to make f1 file before you run it. Also explain for each system call why that system call has been used.
 
 > HW11과 마찬가지로 파일을 만든 후 다음의 코드를 통해 지워 주었다.
+> 
 > ![Alt text](Image/week04_HW12_1.png)
 >
 > ---
 > **Result**
->
+> 
 > ![Alt text](Image/week04_HW12_2.png)
 > <br> ... <br>
 > ![Alt text](Image/week04_HW12_3.png)
