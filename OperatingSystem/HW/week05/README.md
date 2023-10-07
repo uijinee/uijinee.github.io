@@ -97,7 +97,7 @@
 > ![Alt text](Image/week05_HW2_1.png)
 
 ---
-## HW3. Define display_processes() in init/main.c (right before the first function definition). Call this function in the beginning of start_kernel(). Confirm that there is only one process in the beginning. Find the location where the number of processes becomes 2. Use "dmesg" to see the result of display_processes().
+## HW3. Define display_processes() in init/main.c (right before the first function definition). Call this function in the beginning of start_kernel(). Confirm that there is only one process in the beginning. Find the location where the number of processes becomes 2. Find the location where the number of processes becomes 3. Find the location where the number of processes is the greatest. Use "dmesg" to see the result of display_processes().
 
 > **Code 1**
 > 
@@ -114,10 +114,19 @@
 >
 > ---
 >
-> 이제 위에서 작성한 `my_Syscall_displayProcess()`함수를 kelnel이 시작될 때 제일 처음 실행되는 `init/main.c/start_kernel()`함수의 첫 부분에 넣는다.
+> 이제 `my_Syscall_displayProcess()`함수를 다음 부분들에서 호출하도록 작성해 주었다.
 >
-> ![Alt text](Image/week05_HW3_2.png)
+> 1. kelnel이 시작될 때 제일 처음 실행되는 `init/main.c/start_kernel()`함수의 첫 부분
 >
+> 2. `init/main.c/start_kernel()`의 마지막부분에서 `rest_init()`를 호출하기 전 부분<br>
+>   ![Alt text](Image/week05_HW3_2.png)
+>
+> 3. `init/main.c/rest_init()`에서 `kernel_thread`를 call하기 전 부분들
+>   ![Alt text](Image/week05_HW3_3.png)
+>
+> *(참고)*<br>
+> `rest_init()` 함수부터 `kernel_thread`를 call해 프로세스의 수를 늘리게 된다. 
+> 
 > ---
 > **Result**
 > 
@@ -127,9 +136,22 @@
 > ```
 > 를 통해 시스템의 부팅메시지를 확인해 보면 다음과 같이 kernel시작시 실행되어 있는 프로그램의 목록을 확인할 수 있다.
 >
-> ![Alt text](Image/week05_HW3_3.png)
+> ![Alt text](Image/week05_HW3_4.png)
 >
-> 이를 보면 알수 있듯이 kernel의 시작부분에는 `ProcessID=0`인 단 하나의 Process만 실행되고 있음을 확인할 수 있다.
+> ...
+>
+> ![Alt text](Image/week05_HW3_5.png)
+>
+> 1. kernel의 시작부분에는 `ProcessID=0`인 단 하나의 Process만 실행되고 있음을 확인할 수 있다.
+>
+> 2. kernel의 마지막 부분인 `rest_init()`호출 전에도 `ProcessID=0`인 단 하나의 Process만 실행되고 있음을 확인할 수 있다.
+>
+> 3. `rest_init()`함수 안의 `kernel_thread()`를 호출할 때마다 Process가 하나씩 증가하고 있는 것을 확인할 수 있다.<br>
+>   (`kernel_thread(kernel_init)`후의 Process 개수 = 2개)<br>
+>   (`kernel_thread(kthreadd)`후의 Process 개수 = 3개)
+
+
+
 
 ---
 ## HW4. Make a system call that, when called, displays all processes in the system. Run an application program that calls this system call and see if this program displays all processes in the system. 
@@ -267,3 +289,9 @@
 > **Result**
 >
 > 각 프로세스의 Time Slice가 계속 줄어드는 것을 확인할 수 있다.
+>
+> ![Alt text](Image/week05_HW6_1.png)
+>
+> ![Alt text](Image/week05_HW6_2.png)
+>
+> ![Alt text](Image/week05_HW6_3.png)
