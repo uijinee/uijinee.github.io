@@ -62,6 +62,7 @@ Static irqreturn_t atkbd_interrupt(…){
 > **Code**
 >
 > 우선 Keyboard Interrupt를 처리하는 `drivers/input/keyboard/atkbd.c/atkbd_interrupt()`부분을 다음과 같이 고쳐 주었다.
+> 
 > ![Alt text](Image/week03_HW3_1.png)
 >
 > 즉, `printk("%x pressed\n", code);`부분을 통해 내가 Keyboard로 입력한 data를 출력 할 수 있도록 바꾸어 주고 마찬가지로 컴파일하여 Kernel에 적용될 수 있도록 해 주었다.
