@@ -216,13 +216,43 @@ Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 >   - 일반적인 벡터는 $n \times 1$ 의 열벡터를 나타내기 때문
 >   - 평면의 방정식: $a^T(\textbf{x}-x_0) = (a, b, c) \cdot (x_1 - x_0, x_2 - x_0, x_3 - x_0)$
 >
+> ---
+> - Affine Set
+> - Convex Set
 
 ### 4) Halfspaces
 
 ![alt text](/assets/img/post/convexset/halfspace.png)
 
-> 둔
+>> $\begin{Bmatrix} x \|a^T \textbf{x} \leq b \end{Bmatrix}, a \neq 0, b=a^T \textbf{x}_0$
+>
+> - 정의 
+>   - Hyperplane을 경계면으로 하는 공간
+> - 특징
+>   - $a^T(\textbf{x}-x_0) \leq 0$<br>
+>     $\rightarrow$ 내적이 음수 $\rightarrow$ 벡터 $a$와 둔각을 이루는 공간
+>   - $a^T(\textbf{x}-x_0) \geq 0$<br>
+>     $\rightarrow$ 내적이 양수 $\rightarrow$ 벡터 $a$와 예각을 이루는 공간
+>
+> ---
+> - Convex Set
 
 ### 5) Polyhedra
+
+![alt text](/assets/img/post/convexset/polyhedra.png)
+
+>> $\begin{Bmatrix} x \| \textbf{A} \textbf{x} \leq \textbf{b} , \textbf{C} \textbf{x} = d\end{Bmatrix}$
+> 
+> - 정의
+>   - 유한한 개수의 Hyperplane과 Halfspace의 교집합
+>
+> - 의미
+>   - 이것은
+>     $$
+>     \begin{bmatrix}a&b\\ b&c\\ c&d\\ \end{bmatrix}
+>     $$
+>   
+
+
 
 ### 6) NormBall & NormCones
