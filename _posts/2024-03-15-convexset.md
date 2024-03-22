@@ -92,6 +92,8 @@ use_math: true
 ---
 ## 2. Some Sets
 
+![alt text](/assets/img/post/convexset/convexset_relation.png)
+
 Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 이 챕터에서는 Convex Set의 정의를 알아보기 위해 몇가지 집합들의 공간에 대해 살펴보자.
 
@@ -247,12 +249,129 @@ Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 >   - 유한한 개수의 Hyperplane과 Halfspace의 교집합
 >
 > - 의미
->   - 이것은
+>   - $\textbf{A} \textbf{x} \leq \textbf{b}$ 는 다음과 같이 다시 쓸 수 있다.
 >     $$
->     \begin{bmatrix}a&b\\ b&c\\ c&d\\ \end{bmatrix}
+>     \begin{bmatrix}-\textbf{a}_1^T-\\ -\textbf{a}_2^T- \\ ... \\ -\textbf{a}_n^T- \end{bmatrix} \begin{bmatrix}\textbf{x}_1\\ \textbf{x}_2\\ ...\\ \textbf{x}_n \end{bmatrix} \leq \begin{bmatrix}b_1\\ b_2\\ ...\\ b_n \end{bmatrix}
 >     $$
->   
+>   - $\textbf{C} \textbf{x} = \textbf{d}$ 는 다음과 같이 다시 쓸 수 있다.
+>     $$
+>     \begin{bmatrix}-\textbf{c}_1^T-\\ -\textbf{c}_2^T- \\ ... \\ -\textbf{c}_n^T- \end{bmatrix} \begin{bmatrix}\textbf{x}_1\\ \textbf{x}_2\\ ...\\ \textbf{x}_n \end{bmatrix} = \begin{bmatrix}d_1\\ d_2\\ ...\\ d_n \end{bmatrix}
+>     $$
+>   - 즉, 여러 Halfspace들과 Hyperplane들을 나타내는 식이 된다.
+>
+> ---
+> - Convex Set
 
+### 6) NormCone & NormBall
 
+![alt text](/assets/img/post/convexset/normcone.png)
 
-### 6) NormBall & NormCones
+>> NormCone: $\begin{Bmatrix}(\textbf{x}, t)\| \Vert \textbf{x} \Vert \leq t \end{Bmatrix}$<br>
+>> *($\textbf{x}$는 Vector, $t$는 Scalar, NormCone: n+1차원 Vector)*
+>
+> ---
+> **Norm의 성질**
+>
+> - $\Vert x \Vert_p = (\sum\limits_{i} \|x_i\|^p)^{\frac{1}{p}}$
+> - $\Vert x \Vert \geq 0$
+> - $\Vert tx \Vert = \|t\| \Vert x \Vert$ for $t \in \mathbb{R}$
+> - $\Vert x + y \Vert \leq \Vert x \Vert + \Vert y \Vert$ *(삼각부등식)*
+>
+> ---
+> *참고: (2, 3, 5)의 $\infty$ Norm*
+>
+> $\Vert \textbf{x} \Vert_\infty = \lim\limits_{p\rightarrow \infty}(2^p +3^p +5^p)^\frac{1}{p} \approx \lim\limits_{p\rightarrow \infty}(5^p)^\frac{1}{p} = 5$<br>
+> 즉, $max(\textbf{x})$ 를 나타낸다.
+
+![alt text](/assets/img/post/convexset/normball.png)
+
+>> NormBall: $B_p(x_0, r) = \begin{Bmatrix}x \| \Vert x-x_0 \Vert_p \leq r\end{Bmatrix}$<br>
+>> *(p=2인 경우 Euclidean ball)*
+>
+> - $B_1(O, r) \subset B_2(O, r) \subset B_\infty(O, r)$
+>
+> ---
+> **Convex Set 증명**
+>
+> $(x_1, x_2) \in B$ 에 대하여 $(\theta x_1 + (1-\theta) x_2 \in B)$ 가 성립하는지 확인해 보자<br>
+> $$
+> \Vert \theta x_1 + (1-\theta) x_2 - x_0 \Vert_p \\
+> = \Vert \theta x_1 + (1-\theta) x_2 - \theta x_0 - (1-\theta)x_0 \Vert_p \\
+> = \Vert \theta (x_1-x_0) + (1-\theta)(x_2 - x_0) \Vert_p \\
+> \leq \Vert (\theta(x_1 - x_0) \Vert + \Vert(1-\theta)(x_2 - x_0)\Vert_p \\
+> \leq \theta r + (1-\theta) r \\
+> = r \\
+> \therefore \Vert \theta x_1 + (1-\theta) x_2 - x_0 \Vert_p \leq r
+> $$
+
+---
+## 4. Theory
+
+### 1) Seperating Hyperplane Theorem
+
+![alt text](/assets/img/post/convexset/seperating_hyperplane_theorem.png)
+
+>> 2개의 만나지 않는 Convex Set $C, D$가 있을 때<br>
+>> 이 두 Convex Set을 나누는 Hyperplane $\begin{Bmatrix}x \| \textbf{a}^T \textbf{x} = b \end{Bmatrix}$이 반드시 하나이상 존재한다.
+>
+> ---
+> **증명**
+> 
+> 두 Convex Set이 가장 가까워지는 순간 $C, D$ 위의 점을 $\vec{c}, \vec{d}$라고 하자.<br>
+> 또한, Hyperplane은 이 두 점을 잇는 직선을 수직이등분하여 지나간다.
+> 
+>> ⅰ. Hyperplane의 방정식: $a^T\textbf{x} = b$
+>
+>  - Hyperplane의 $a^T = \vec{d} - \vec{c}$
+>  - Hyperplane의 $b = \frac{\Vert d \Vert^2 - \Vert c \Vert^2}{2}$<br>
+>    $\rightarrow \because b = \textbf{a}^Tx_0 = (\vec{d} - \vec{c})(\frac{\vec{d} + \vec{c}}{2})$
+>
+>> ⅱ. Convex Set $D$위의 임의의 점 $\hat{d}$가 $d$보다 더 가깝다고 가정
+>
+> - $\vec{d}-\vec{c} \geq \vec{\hat{d}} - \vec{c}$
+>
+>> ⅲ. Taylor전개: $\bigtriangleup g = (2d - 2c)^T(\hat{d}-d)$
+>
+>  - $\bigtriangleup f(\textbf{x}) \approx \nabla f(x_0)^T (x-x_0)$<br>
+>    $\rightarrow$어떤 점 $x_0$ 에서 다른 점 $\textbf{x}$ 까지 이동할 때 함수의 변화를 근사하는 식
+>  - 임의의 점에서 C까지의 거리 방정식 = $g(\textbf{x}) = \Vert \textbf{x} - \textbf{c} \Vert^2 = (\textbf{x} - c)^T(\textbf{x} - c)$<br>
+>  $= x^Tx - x^Tc - c^Tx + c^Tc$
+>  - $\nabla \textbf{x}^T\textbf{x} = 2\textbf{x}$, (전개 후 유도 가능)
+>  - $\textbf{x}^T\textbf{c} = \textbf{c}^T\textbf{x}$
+>
+>> ⅳ. Taylor전개가 음수임을 증명
+>
+> - Talyor전개가 음수임을 알면 $\vec{d}-\vec{c} \geq \vec{\hat{d}} - \vec{c}$ 가 거짓임을 알 수 있다.
+>   $$
+    \bigtriangleup g = (2d - 2c)^T(\hat{d}-d) = 2(- \Vert d \Vert^2 + (d-c)^T\hat{d} + c^Td) \\
+>   \leq 2(-\Vert d \Vert^2 + \frac{\Vert d \Vert^2 - \Vert c \Vert^2}{2} + c^Td) \\
+>   = -\Vert d \Vert^2 - \Vert c \Vert^2 + 2c^T d
+>   = -\Vert d-c \Vert^2 < 0     
+>   $$
+ 
+
+### 2) Supporting Hyperplane Theorem
+
+![alt text](/assets/img/post/convexset/supporting_hyperplane_theorem.png)
+
+> Convex Set의 접평면 $a^Tx_0$에 대해 Convex Set의 모든 원소는 이 접평면 아래에 존재한다.<br>
+> 즉, 모든 $x \in C$에 대해 $a^Tx \leq a^Tx_0$를 만족할 때 <br>
+> $\begin{Bmatrix} x \| a^Tx = a^Tx_0 \end{Bmatrix}$ 인 Hyperplane은 집합 C의 Supporting Vector이다.
+ 
+### 3) Convexity Preserving
+
+![alt text](/assets/img/post/convexset/minkowski_addition.png)
+
+> $C, C_1, C_2$ 가 Convex Set일때, 다음도 Convex Set이다.
+> 
+> - Intersection<br>
+>   $C_1 \cap C_2$
+> - Scaling<br>
+>   $aC = \begin{Bmatrix} a\textbf{x} \| \textbf{x} \in C\end{Bmatrix}$
+> - Translation<br>
+>   $a+C = \begin{Bmatrix} a + \textbf{x} \| \textbf{x} \in C\end{Bmatrix}$
+> - Minkowski Addition<br>
+>   $A\oplus B = \begin{Bmatrix} \textbf{x} + \textbf{y} \| \textbf{x} \in A, \textbf{y} \in B \end{Bmatrix}$
+>
+> ---
+> *(Union(합집합)은 Convexity Preserving이 되지 않는다.)*
