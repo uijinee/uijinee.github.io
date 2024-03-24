@@ -373,7 +373,7 @@ Normal Form이란 정해진 특정 제약 조건을 만족하는 형태의 Relat
 > 
 > ![Alt text](/assets/img/post/database/bcnf_problem.png)
 >
-> - **[Dependency Preserving](#Dependency-Preserving예시)이 보장되지 않는다.**<br>
+> - **Dependency Preserving이 보장되지 않는다.**<br>
 >   : 기존의 `{학번, 과목}`이 `{교수}`를 결정한다는 Functional Dependecy에 대한 정보는<br>
 > 두 Table을 Join하기 전까지는 확인이 불가능하다.
 >
