@@ -1,5 +1,5 @@
 ---
-title: "5. ER Modeling"
+title: "5. E-R Modeling"
 date: 2023-12-05 22:00:00 +0900
 categories: ["Computer Science", "DataBase"]
 tags: ["db", "database"]

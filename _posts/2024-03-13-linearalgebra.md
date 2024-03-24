@@ -10,20 +10,16 @@ use_math: true
 ## 1. Review of linear algebra
 
 ### 1) Notation
-> - $\mathbb{R}$: 실수의 집합(Scalar)
->   - $ x \in \mathbb{R} \rarr$ x는 스칼라 
-> - $\mathbb{R}^n$: n차원 실수 벡터(Vector)
->   - $ \textbf{x} \in \mathbb{R}^n \rarr$ x는 <u>Column</u> 벡터
->   - $ \textbf{x} = \begin{bmatrix} x_1,\\ x_2, \\ ..., \\ x_n\end{bmatrix} \rarr$ Matrix Notation
->   - $ \textbf{x} = \begin{pmatrix}x_1, x_2, ..., x_n \end{pmatrix} \rarr$ Coordinate Notation
-> - $\mathbb{R}^{m \times n}$: Row=M, Column=N인 행렬(Matrix)
+
+> 기본 Notation
+>
+> | Scalar              | Vector                         | Matrix                          |
+> |:-------------------:|:------------------------------:|:-------------------------------:|
+> | $x$ (소문자)        | $\textbf{x}$ (두꺼운 소문자)    |  $X$ (대문자)                    |
+> | $ x \in \mathbb{R}$ | $ \textbf{x} \in \mathbb{R}^n$ | $X \in \mathbb{R}^{m \times n}$ |
 >
 > ---
-> | Scalar        | Vector                      | Matrix       |
-> |---------------|-----------------------------|--------------|
-> |  $x$ (소문자)  | $\textbf{x}$ (두꺼운 소문자) |  $X$ (대문자) |
->
-> ---
+> 행렬의 종류별 Notation
 > 
 > | $\mathbb{S}^{n \times n}, \mathbb{S}^{n}$ | $I$ | $A^{-1}$  | $A^T$ |
 > |:-----------------------------------------:|:---:|:---------:|:-----:|

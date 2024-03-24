@@ -1,6 +1,6 @@
 ---
 title: "1. Convex Set"
-date: 2024-03-14 22:00:00 +0900
+date: 2024-03-15 22:00:00 +0900
 categories: ["Math", "Convex Optimization"]
 tags: ["math"]
 use_math: true

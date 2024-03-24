@@ -1,5 +1,5 @@
 ---
-title: "6. EER-Modeling"
+title: "6. EE-R Modeling"
 date: 2023-12-06 22:00:00 +0900
 categories: ["Computer Science", "DataBase"]
 tags: ["db", "database"]
