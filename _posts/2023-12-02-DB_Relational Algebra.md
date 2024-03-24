@@ -1,3 +1,11 @@
+---
+title: "2. Relational Algebra"
+date: 2023-12-01 22:00:00 +0900
+categories: ["Computer Science", "DataBase"]
+tags: ["db", "database"]
+use_math: true
+---
+
 # Relational Operator
 DataBase에 정보를 요청하는 언어를 Query Language 라고 한다.
 이 Query Language에는 다음과 같이 추상적인 개념인 Pure Query Language가 존재한다.

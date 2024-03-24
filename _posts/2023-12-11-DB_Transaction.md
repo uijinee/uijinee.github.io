@@ -1,3 +1,11 @@
+---
+title: "11. Transaction"
+date: 2023-12-11 22:00:00 +0900
+categories: ["Computer Science", "DataBase"]
+tags: ["db", "database"]
+use_math: true
+---
+
 DataBase에서 가장 중요한 점은 **"동시성"**이다. 이 **"동시성"**에는 두가지 의미가 있는데,
 
 - **Transaction**: 동시에 동작되어야 하는 작업<br>

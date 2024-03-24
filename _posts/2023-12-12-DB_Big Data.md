@@ -1,3 +1,12 @@
+---
+title: "12. Big Data"
+date: 2023-12-12 22:00:00 +0900
+categories: ["Computer Science", "DataBase"]
+tags: ["db", "database"]
+use_math: true
+---
+
+
 # NOSQL
 
 RDBMS는 과거에 Transaction과 Concurrency Control 등을 통해 안전적으로 데이터를 관리할 수 있다는 장점 덕분에 많이 사용되어 왔다.

@@ -1,3 +1,12 @@
+---
+title: "5. ER Modeling"
+date: 2023-12-05 22:00:00 +0900
+categories: ["Computer Science", "DataBase"]
+tags: ["db", "database"]
+use_math: true
+---
+
+
 앞에서는 DataBase를 사용하는 방법에 대해서 알아보았다면, 여기서는 DataBase를 어떻게 설계해야 하는지, 즉 DataBase의 Schema를 어떻게 만들지에 대한 생각을 해보는 부분이다.
 
 이를 위해서 Entity-Relationship Model이라는 개념을 도입하게 되는데, 이 E-R Model을 먼저 만들고, 이를 통해 Relational Model을 만들게 된다.

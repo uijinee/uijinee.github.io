@@ -1,3 +1,12 @@
+---
+title: "3. SQL Basic(1)"
+date: 2023-12-03 22:00:00 +0900
+categories: ["Computer Science", "DataBase"]
+tags: ["db", "database"]
+use_math: true
+---
+
+
 # SQL
 
 앞서 데이터에 대한 이론적인 조작 방법인 Relational Algebra를 살펴 보았다.

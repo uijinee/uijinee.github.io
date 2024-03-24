@@ -1,3 +1,11 @@
+---
+title: "10. Query Processing"
+date: 2023-12-10 22:00:00 +0900
+categories: ["Computer Science", "DataBase"]
+tags: ["db", "database"]
+use_math: true
+---
+
 여태까지는 Query를 사용하는 방법에 대해서 배웠었다면,<br>
 여기서는 Data Base가 Query를 내부적으로 어떻게 수행하는지에 대해서 공부해볼 예정이다.
 

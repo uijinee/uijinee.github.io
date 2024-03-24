@@ -1,3 +1,12 @@
+---
+title: "6. EER-Modeling"
+date: 2023-12-06 22:00:00 +0900
+categories: ["Computer Science", "DataBase"]
+tags: ["db", "database"]
+use_math: true
+---
+
+
 # EE-R Model
 EE-R Model은 Enhanced Entity-Relationship Model의 약자로, 기존의 Basic E-R Model에 추가적인 Concept를 적용한 모델이다.
 

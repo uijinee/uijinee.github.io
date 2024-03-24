@@ -1,3 +1,12 @@
+---
+title: "7. Normalization"
+date: 2023-12-07 22:00:00 +0900
+categories: ["Computer Science", "DataBase"]
+tags: ["db", "database"]
+use_math: true
+---
+
+
 ## Abstract
 앞의 E-R Model과 EE-R Model을 통해 DataBase를 표현하는 방법에 대해서 배웠다면,<br>
 이제는 DataBase를 어떻게 구성해야 하는지 알아보도록 하자.

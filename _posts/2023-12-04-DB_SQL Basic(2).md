@@ -1,3 +1,11 @@
+---
+title: "4. SQL Basic(2)"
+date: 2023-12-04 22:00:00 +0900
+categories: ["Computer Science", "DataBase"]
+tags: ["db", "database"]
+use_math: true
+---
+
 
 # DML
 

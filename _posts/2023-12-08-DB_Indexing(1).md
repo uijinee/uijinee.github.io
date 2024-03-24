@@ -1,3 +1,12 @@
+---
+title: "8. Indexing(1)"
+date: 2023-12-08 22:00:00 +0900
+categories: ["Computer Science", "DataBase"]
+tags: ["db", "database"]
+use_math: true
+---
+
+
 이전까지는 데이터 베이스를 사용하는 방법에 대해서 알아 보았다.
 
 즉, Postgre SQL과 같은 DB를 사용하는 방법과, 어떻게 데이터를 저장하는 것이 좋은 방법인지와 같은 Logical한 방법론들을 배웠었다.
@@ -119,7 +128,7 @@ File은 위와 같은 구조로 저장된다.
 
 ### 2) Variable Length Record
 
-![](https://velog.velcdn.com/images/abrahamkim98/post/9ec8a121-10af-423e-ace4-63cb0dd32ff3/image.png)
+![alt text](/assets/img/post/database/variablelength_record.png)
 
 위의 Fixed Length Record일 경우와는 다르게 Variable Length Record일 경우 Record의 위치를 바로 결정할 수 없다.
 
@@ -127,7 +136,7 @@ File은 위와 같은 구조로 저장된다.
 
 이를 해결하기 위해 위의 그림과 같이 Record를 Organization시켜 보자.
 
-![](https://velog.velcdn.com/images/abrahamkim98/post/0088be42-923c-4a01-9bc9-e86655d01eef/image.png)
+![alt text](/assets/img/post/database/organation_iocomplexity.png)
 
 
 >
@@ -190,7 +199,7 @@ Disk의 메모리를 Buffer에 올리려고 할 때, Memory는 다음과 같은 
  Buffer에 빈 공간이 있을 때: 해당 Block을 바로 Buffer에 올려준다<br>
  Buffer에 빈 공간이 없을 때: Victim을 선정해 Buffer를 비우고 해당 Block을 Buffer에 올려준다.
 
-![](https://velog.velcdn.com/images/abrahamkim98/post/f10aabc2-c114-4811-a8d1-00cdd6534099/image.png)
+4. 작업 완료 후 Memory에서 데이터를 변경하였을 경우 다시 Disk에 written back해준다.
 
 *(Victim이란? 원래 Buffer에 있던 Data Block중 지울 Data Block을 의미한다.)*
 

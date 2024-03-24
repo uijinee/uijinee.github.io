@@ -1,3 +1,12 @@
+---
+title: "9. Indexing(2)"
+date: 2023-12-09 22:00:00 +0900
+categories: ["Computer Science", "DataBase"]
+tags: ["db", "database"]
+use_math: true
+---
+
+
 Index는 내가 원하는 Record의 위치를 가리키고있는 date Structure를 말한다.
 
 이 Index는 다음과 같은 Record로 구성된 하나의 File이다
