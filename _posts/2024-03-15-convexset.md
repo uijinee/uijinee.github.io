@@ -12,7 +12,7 @@ use_math: true
 
 ### 1) 정의
 
-![alt text](/assets/img/post/convexset/convexoptimization.png)
+![alt text](/assets/img/post/convex_optimization/convexoptimization.png)
 
 > **Object Function**을 주어진 **Constraints**하에, **Minimize**하는 것.<br>
 > *(이를 "**Programming**, 계획법"이라고도 함. (Coding을 의미하는 것이 아님))*
@@ -64,7 +64,7 @@ use_math: true
 
 ### 3) Convex Optimization
 
-![alt text](/assets/img/post/convexset/convexoptimization_table.png)
+![alt text](/assets/img/post/convex_optimization/convexoptimization_table.png)
 
 > **What?**
 >
@@ -92,14 +92,14 @@ use_math: true
 ---
 ## 2. Some Sets
 
-![alt text](/assets/img/post/convexset/convexset_relation.png)
+![alt text](/assets/img/post/convex_optimization/convexset_relation.png)
 
 Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 이 챕터에서는 Convex Set의 정의를 알아보기 위해 몇가지 집합들의 공간에 대해 살펴보자.
 
 ### 1) Subspace 
 
-![alt text](/assets/img/post/convexset/subspace.png)
+![alt text](/assets/img/post/convex_optimization/subspace.png)
 
 > ⅰ. **Plane**
 > 
@@ -120,7 +120,7 @@ Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 
 ### 2) Affine Sets
 
-![alt text](/assets/img/post/convexset/affineset.png)
+![alt text](/assets/img/post/convex_optimization/affineset.png)
 
 > ⅰ. **Lines**
 > 
@@ -150,7 +150,7 @@ Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 
 ### 3) Convex Set
 
-![alt text](/assets/img/post/convexset/convexset.png)
+![alt text](/assets/img/post/convex_optimization/convexset.png)
 
 > ⅰ. **Line Segment**
 >
@@ -179,7 +179,7 @@ Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 
 ### 1) Convex Hull
 
-![alt text](/assets/img/post/convexset/convexhull.png)
+![alt text](/assets/img/post/convex_optimization/convexhull.png)
 
 >
 >> $Conv(S) = \begin{Bmatrix}\theta_1 x_1 + \theta_2 x_2 + ... + \theta_n x_n \| x_i \in \mathcal{S}, \theta_i \geq 0 , \sum \theta_i = 1\end{Bmatrix}$
@@ -191,7 +191,7 @@ Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 
 ### 2) Convex Cone
 
-![alt text](/assets/img/post/convexset/convexcone.png)
+![alt text](/assets/img/post/convex_optimization/convexcone.png)
 
 >> $\begin{Bmatrix}\theta_1 x_1 + \theta_2 x_2 + ... + \theta_n x_n \| x_i \in \mathcal{S}, \theta_i \geq 0 \end{Bmatrix}$
 > 
@@ -208,7 +208,7 @@ Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 
 ### 3) Hyperplanes
 
-![alt text](/assets/img/post/convexset/hyperplane.png)
+![alt text](/assets/img/post/convex_optimization/hyperplane.png)
 
 >> $\begin{Bmatrix} x \|a^T \textbf{x} = b \end{Bmatrix}, a \neq 0, b=a^T \textbf{x}_0$
 >
@@ -224,7 +224,7 @@ Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 
 ### 4) Halfspaces
 
-![alt text](/assets/img/post/convexset/halfspace.png)
+![alt text](/assets/img/post/convex_optimization/halfspace.png)
 
 >> $\begin{Bmatrix} x \|a^T \textbf{x} \leq b \end{Bmatrix}, a \neq 0, b=a^T \textbf{x}_0$
 >
@@ -241,7 +241,7 @@ Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 
 ### 5) Polyhedra
 
-![alt text](/assets/img/post/convexset/polyhedra.png)
+![alt text](/assets/img/post/convex_optimization/polyhedra.png)
 
 >> $\begin{Bmatrix} x \| \textbf{A} \textbf{x} \leq \textbf{b} , \textbf{C} \textbf{x} = d\end{Bmatrix}$
 > 
@@ -264,7 +264,7 @@ Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 
 ### 6) NormCone & NormBall
 
-![alt text](/assets/img/post/convexset/normcone.png)
+![alt text](/assets/img/post/convex_optimization/normcone.png)
 
 >> NormCone: $\begin{Bmatrix}(\textbf{x}, t)\| \Vert \textbf{x} \Vert \leq t \end{Bmatrix}$<br>
 >> *($\textbf{x}$는 Vector, $t$는 Scalar, NormCone: n+1차원 Vector)*
@@ -283,7 +283,7 @@ Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 > $\Vert \textbf{x} \Vert_\infty = \lim\limits_{p\rightarrow \infty}(2^p +3^p +5^p)^\frac{1}{p} \approx \lim\limits_{p\rightarrow \infty}(5^p)^\frac{1}{p} = 5$<br>
 > 즉, $max(\textbf{x})$ 를 나타낸다.
 
-![alt text](/assets/img/post/convexset/normball.png)
+![alt text](/assets/img/post/convex_optimization/normball.png)
 
 >> NormBall: $B_p(x_0, r) = \begin{Bmatrix}x \| \Vert x-x_0 \Vert_p \leq r\end{Bmatrix}$<br>
 >> *(p=2인 경우 Euclidean ball)*
@@ -309,7 +309,7 @@ Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 
 ### 1) Seperating Hyperplane Theorem
 
-![alt text](/assets/img/post/convexset/seperating_hyperplane_theorem.png)
+![alt text](/assets/img/post/convex_optimization/seperating_hyperplane_theorem.png)
 
 >> 2개의 만나지 않는 Convex Set $C, D$가 있을 때<br>
 >> 이 두 Convex Set을 나누는 Hyperplane $\begin{Bmatrix}x \| \textbf{a}^T \textbf{x} = b \end{Bmatrix}$이 반드시 하나이상 존재한다.
@@ -352,7 +352,7 @@ Convex Set은 Convex Function의 정의역 역할을 한다.<br>
 
 ### 2) Supporting Hyperplane Theorem
 
-![alt text](/assets/img/post/convexset/supporting_hyperplane_theorem.png)
+![alt text](/assets/img/post/convex_optimization/supporting_hyperplane_theorem.png)
 
 > Convex Set의 접평면 $a^Tx_0$에 대해 Convex Set의 모든 원소는 이 접평면 아래에 존재한다.<br>
 > 즉, 모든 $x \in C$에 대해 $a^Tx \leq a^Tx_0$를 만족할 때 <br>
@@ -360,7 +360,7 @@ Convex Set은 Convex Function의 정의역 역할을 한다.<br>
  
 ### 3) Convexity Preserving
 
-![alt text](/assets/img/post/convexset/minkowski_addition.png)
+![alt text](/assets/img/post/convex_optimization/minkowski_addition.png)
 
 > $C, C_1, C_2$ 가 Convex Set일때, 다음도 Convex Set이다.
 > 
