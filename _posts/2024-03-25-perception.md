@@ -1,6 +1,6 @@
 ---
 title: "2. Perception"
-date: 2024-03-25 22:00:00 +0900
+date: 2024-03-25 09:00:00 +0900
 categories: ["Autonomous Driving", "Concept"]
 tags: ["autonomous driving", "perception"]
 use_math: true

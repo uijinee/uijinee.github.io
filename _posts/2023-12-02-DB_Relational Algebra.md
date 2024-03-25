@@ -1,6 +1,6 @@
 ---
 title: "2. Relational Algebra"
-date: 2023-12-01 22:00:00 +0900
+date: 2023-12-02 22:00:00 +0900
 categories: ["Computer Science", "DataBase"]
 tags: ["db", "database"]
 use_math: true
