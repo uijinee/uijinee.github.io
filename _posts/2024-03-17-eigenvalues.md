@@ -6,98 +6,162 @@ tags: ["math", "eigenvalue", "eigenvector", "eigendecomposition"]
 use_math: true
 ---
 
-# 고윳값, 고유벡터
+# 
+
+## 1. 고윳값 분해(Eigen Value Decomposition)
+
+### 1) 고윳값, 고유벡터
 $A\mathbb{x} = \lambda \mathbb{x}$<br>
 
 &#8251; $A$: 행렬, $\mathbb{x}$: 0이 아닌 벡터, $\lambda$: 스칼라
 
-0이 아닌 어떤 벡터 $\vec{X}$에 대해 행렬 A에 의한 선형 변환의 결과가 자기 자신의 상수배가 될 때,<br>
-- $\vec{X}$ = 고유 벡터<br>
-- &lambda; = 고유값
+- $\mathbb{x}$ = 고유 벡터<br>
+- $\lambda$ = 고유값
 
-이라고 정의 된다.
-
+> 0이 아닌 어떤 벡터 $\mathbb{x}$에 대해 행렬 A에 의한 선형 변환의 결과가 자기 자신의 상수배가 될 때(즉, 방향이 변하지 않을 때) 상수값과 벡터를 말한다.
+>
+> ---
 > #### 고유값
 > 
-> $(\lambda - A) \vec{X} = 0$이 $\vec{X} \neq 0$인 해를 가져야 한다. <br> 
->> 즉, 특성방정식 $det(\lambda I - A) = 0$ 을 만족하는 &lambda;를구한다.
+> $(\lambda - A) \mathbb{x} = 0$이 $\mathbb{x} \neq 0$인 해(자명하지 않은 해)를 가져야 한다. <br> 
+> 만약 $(A-\lambda I)$의 역행렬이 존재한다고 하면 $\mathbb{x}=0$만을 해로 가지기 때문에 처음 가정과 모순이다.
+> 
+>> 따라서 특성방정식 $det(\lambda I - A) = 0$ 을 만족하는 &lambda;가 고유값이다.
+>
+> 또, 이 고윳값으로 대각합과 행렬식을 구할 수 있다,
+> - $det(A) = \prod \limits_{i=1}^N \lambda_i$
+> - $tr(A) = \sum \limits_{i=1}^N \lambda_i$
 >
 > ---
 > #### 고유벡터
 > 
-> 
 >> 고유값 &lambda; 를 먼저 구한 후,<br>
->> $(\lambda - A) \vec{X} = 0$에 대입하여 $\vec{X}$를 구한다.
+>> $(\lambda - A) \mathbb{x} = 0$에 대입하여 $\mathbb{x}$를 구한다.
 
-## 1. 고윳값 분해
-
-### 1) 정의
 
 ### 2) 대각화
 
-> **닮음행렬**
-> 
-> $AP = PB$<br>
-> $A = P B P^{-1}$<br> 
+> 어떤 행렬 $A$의 고유값과 고유벡터를 알아내면 대각화를 쉽게 할 수 있다.<br>
+> 즉, 이로써 계산상의 이점을 얻을 수 있다.
 >
-> 1. 닮음이란?<br>
->   두 정사각행렬이 같은 선형 변환의 서로 다른 기저에 대한 표현임을 나타내는 관계를 말한다.<br>
-> 
 > ---
-> **대각화**
+> **대각화가능성 및 대각화**
 >
-> $D = P^{-1} A P$<br>
+> 고유값과 고유벡터로 부터 행렬얼 어떻게 대각화 할 수 있는지 알아보자.
 >
-> 1. 대각화란?<br>
->   행렬 A와 닮음인 행렬 중 대각행렬인 D를 찾는 것을 의미한다.
+> - ⅰ. 행렬 A의 고유값과 고유벡터가 각각 $(\lambda_1, \lambda_2, ... , \lambda_n), \quad (\mathbf{v}_1, \mathbf{v}_2, ..., \mathbf{v}_n)$ 이라고 하자.
 > 
-> 2. 대각화의 이점<br>
-> 만약 어떤 행렬 A의 닮음행렬중 대각행렬을 찾을 수 있다면 다음과 같은 성질들을 활용할 수 있다.<br>
-> ⅰ) 대각원소 = A의 고유값<br>
-> ⅱ) 대각원소의 곱 = A의 행렬식
+> - ⅱ. 고유값과 고유벡터의 정의에 의해 다음과 같이 쓸 수 있다.<br>
+> $$
+> \begin{pmatrix}
+>   \mathbf{Av}_1 = \lambda_1 \mathbf{v}_1\\ 
+>   \mathbf{Av}_2 = \lambda_2 \mathbf{v}_2\\ 
+>   \vdots \\ 
+>   \mathbf{Av}_n = \lambda_n \mathbf{v}_n 
+> \end{pmatrix}
+> \rightarrow
+> \mathbf{A}
+> \begin{pmatrix}
+>   \mathbf{v}_1\\ 
+>   \mathbf{v}_2\\ 
+>   \vdots \\ 
+>   \mathbf{v}_n
+> \end{pmatrix}^T
+> =
+> \begin{pmatrix}
+>   \mathbf{v}_1\\ 
+>   \mathbf{v}_2\\ 
+>   \vdots \\ 
+>   \mathbf{v}_n
+> \end{pmatrix}^T
+> \begin{pmatrix}
+>   \lambda_1 & 0 & ... & 0 \\ 
+>   0 & \lambda_2 & ... & 0 \\ 
+>   \vdots & \vdots & \ddots & \vdots \\ 
+>   0 & 0 & ... & \lambda_n
+> \end{pmatrix}
+> $$<br>
+> *($\mathbf{v}_i$는 열벡터임을 주의)*
+>
+> - ⅲ. 이때, $P = \begin{pmatrix} \mathbf{v}_1 & \mathbf{v}_2 & ... & \mathbf{v}_n \end{pmatrix}$ 의 역행렬이 존재하기 위해서는 원소들이 <u>선형 독립</u>이어야 한다.
 > 
+> - ⅳ. 만약 $P$의 역행렬이 존재한다고 하면 다음과 같이 쓸 수 있다.
+> $$
+> \mathbf{A} \mathbf{P} = \mathbf{P} \mathbf{\Lambda} \rightarrow \mathbf{A} = \mathbf{P} \mathbf{\Lambda} \mathbf{P}^{-1} \\
+> \&\quad \mathbf{P} = \begin{pmatrix} \mathbf{v}_1 & \mathbf{v}_2 & ... & \mathbf{v}_n \end{pmatrix} \\
+> \&\quad \mathbf{\Lambda} = 
+> \begin{pmatrix}
+>   \lambda_1 & 0 & ... & 0 \\ 
+>   0 & \lambda_2 & ... & 0 \\ 
+>   \vdots & \vdots & \ddots & \vdots \\ 
+>   0 & 0 & ... & \lambda_n
+> \end{pmatrix}
+> $$
+>
 > ---
-> #### 대각화 가능성
->
-> $n \times n$인 행렬 A가 n개의 선형독립인 고유벡터를 갖는다.
+> **활용**
 > 
+> - 이 대각화의 결과($A = P^{-1} D P$)는 닮음과도 관련이 있다.<br>
+>   $\rightarrow$ 닮음: $AP = PB$, 즉 두 정사각행렬이 같은 선형 변환의 서로 다른 기저에 대한 표현임을 나타내는 관계
+>  
+> - 행렬 A를 대각화하면 다음과 같은 식을 활용할 수도 있다.<br>
+> $A^n = (P^{-1} \Lambda P) ... (P^{-1} \Lambda P) = (P^{-1} \Lambda^n P)$
+
+### 3) 직교대각화
+
+> - 직교대각화란 고유벡터($\mathbf{U} = \begin{bmatrix}\mathbf{u}_1 & \mathbf{u}_2 & ... & \mathbf{u}_n \end{bmatrix}$)들이 모두 직교 한다는 뜻이다.<br>
+>   ⅰ. $(if \; i\neq j) \qquad \mathbf{u}_i^T\mathbf{u}_j = 0$<br>
+>   ⅱ. $(if \; i=j) \qquad \mathbf{u}_i^T\mathbf{u}_j = 1$
+>
+> - 대칭행렬($A^T=A$)을 대각화하면 직교대각화가 된다.<br>
+>  $\rightarrow$ <u>대칭행렬의 대각화와 직교대각화는 동치이다.</u>
+>
 > ---
-> #### 대각화 
+> **대칭행렬의 성질**
 >
-> 행렬 $A$의 고유벡터 집합 $\{\vec{p_1}, \vec{p_2}, ... , \vec{p_n}\}$를 찾는다.<br>
->
-> 이 고유벡터를 열벡터로 하는 행렬 $P$를 만든다.<br>
+> 1. 고유값이 항상 실수이다.<br>
+> 2. 고유벡터는 모두 직교한다.<br>
+>   $\rightarrow \mathbf{U}^T\mathbf{U} = \mathbf{U}\mathbf{U}^T = I$<br>
+>   $\rightarrow \mathbf{U}^{-1} = \mathbf{U}^T $
 > 
->> $D = P^{-1} A P$를 통해 대각행렬 D를 찾는다.<br>
->> 이때, 대각행렬은 고유값 $\lambda_1, \lambda_2, ... \lambda_n$을 대각 원소로 갖는다.
-
-
-### 3) 활용
-> #### LU분해
-> #### QR분해
-> #### 그람-슈미트 과정
-
-
-# Symmetric Matrix
-
-- 고윳값이 모두실수
-- 고유벡터가 모두 수직
-- 대각화 가능
+> 3. PSD (Positive Semi Definite)이다<br>
+>   $\rightarrow$ 모든 고유값 $\lambda_i \geq 0$
+>
+> ---
+> **직교대각화**
+>
+>> $A$가 대칭행렬이라면, 대각화시 직교대각화를 할 수 있고,<br>
+>> $A = \mathbf{U \Lambda U}^T$ 이다.
+> 
+> - Rank-1 matrix 분해<br>
+> $$
+> A = \mathbf{U \Lambda U}^T = \begin{pmatrix}u_1 & u_2 & ... & u_n\end{pmatrix}
+> \begin{pmatrix}
+>   \lambda_1 & 0 & ... & 0 \\ 
+>   0 & \lambda_2 & ... & 0 \\ 
+>   \vdots & \vdots & \ddots & \vdots \\ 
+>   0 & 0 & ... & \lambda_n
+> \end{pmatrix} 
+> \begin{pmatrix} u_1^T \\ u_2^T \\ \vdots \\ u_N^T \end{pmatrix} \\
+> = \begin{pmatrix} \lambda_1 u_1 & \lambda_2 u_2 ... \lambda_n u_n\end{pmatrix}
+> \begin{pmatrix} u_1^T \\ u_2^T \\ \vdots \\ u_N^T \end{pmatrix} \\
+> = \sum \limits_{i=1}^n \lambda_i u_i u_i^T
+> $$
+>
+> - 즉, $\lambda_i$ 는 단위벡터 $u_i$ 방향에 대한 Gain으로 생각할 수 있다.
 
 ---
 ## 2. 특이값 분해(Singular Value Decomposition)
 
 사용분야: 알고리즘, 자료압축
 
-- 정방행렬의 고유값을 구하기 위해서는 특성방정식을 풀어야 한다.<br>
-  하지만 이 과정은 계산상 복잡하고 어렵기 때문에 대부분의 응용에서 직접 이용하기 힘들다.
-- 정방행렬이 아닌 행렬에 대해서는 고유값 분해를 수행할 수 없다.
-
-
 ### 1) 특이값
 
 고유값은 정방행렬에서만 정의 되었기 때문에, 정방행렬이 아닌 $A_{M \times N}$행렬에서는 정방행렬과 같은 방법으로는 대각행렬을 찾을 수 없다.
 
+> **$A^TA$의 성질**
+> 
+> ---
 > #### 직교대각화
 > 행렬 $A_{M \times N}$는 $A^TA$행렬로 변환시켜 정방행렬로 만들어 대각행렬을 찾을 수 있는데, 이 때의 대각행렬은 직교대각행렬이다.
 >
@@ -189,3 +253,8 @@ $A\mathbb{x} = \lambda \mathbb{x}$<br>
 > 하지만 이 과정은 계산상 복잡하고 어렵기 때문에 대부분의 응용에서 직접 이용하기 힘들다.
 
 ---
+
+### 4) 활용
+> #### LU분해
+> #### QR분해
+> #### 그람-슈미트 과정
