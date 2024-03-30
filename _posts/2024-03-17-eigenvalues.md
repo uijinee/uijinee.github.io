@@ -6,9 +6,11 @@ tags: ["math", "eigenvalue", "eigenvector", "eigendecomposition"]
 use_math: true
 ---
 
-# 
+# Eigenvalues
 
-## 1. 고윳값 분해(Eigen Value Decomposition)
+## 1. 고윳값 분해(EigenValue Decomposition)
+
+![alt text](/assets/img/post/convex_optimization/eignevalue_decomposition.png)
 
 ### 1) 고윳값, 고유벡터
 $A\mathbb{x} = \lambda \mathbb{x}$<br>
@@ -109,6 +111,17 @@ $A\mathbb{x} = \lambda \mathbb{x}$<br>
 
 ### 3) 직교대각화
 
+ $$
+A = \mathbf{U \Lambda U}^T = \begin{pmatrix}u_1 & u_2 & ... & u_n\end{pmatrix}
+\begin{pmatrix}
+  \lambda_1 & 0 & ... & 0 \\ 
+  0 & \lambda_2 & ... & 0 \\ 
+  \vdots & \vdots & \ddots & \vdots \\ 
+  0 & 0 & ... & \lambda_n
+\end{pmatrix} 
+\begin{pmatrix} u_1^T \\ u_2^T \\ \vdots \\ u_N^T \end{pmatrix} \\
+$$
+
 > - 직교대각화란 고유벡터($\mathbf{U} = \begin{bmatrix}\mathbf{u}_1 & \mathbf{u}_2 & ... & \mathbf{u}_n \end{bmatrix}$)들이 모두 직교 한다는 뜻이다.<br>
 >   ⅰ. $(if \; i\neq j) \qquad \mathbf{u}_i^T\mathbf{u}_j = 0$<br>
 >   ⅱ. $(if \; i=j) \qquad \mathbf{u}_i^T\mathbf{u}_j = 1$
@@ -117,16 +130,29 @@ $A\mathbb{x} = \lambda \mathbb{x}$<br>
 >  $\rightarrow$ <u>대칭행렬의 대각화와 직교대각화는 동치이다.</u>
 >
 > ---
-> **대칭행렬의 성질**
+> **<mark>대칭행렬의 성질</mark>**
 >
 > 1. 고유값이 항상 실수이다.<br>
+>   
 > 2. 고유벡터는 모두 직교한다.<br>
 >   $\rightarrow \mathbf{U}^T\mathbf{U} = \mathbf{U}\mathbf{U}^T = I$<br>
 >   $\rightarrow \mathbf{U}^{-1} = \mathbf{U}^T $
 > 
-> 3. PSD (Positive Semi Definite)이다<br>
->   $\rightarrow$ 모든 고유값 $\lambda_i \geq 0$
->
+> 3. 동치인 명제들<br>
+>   ⅰ. 만약 PSD (Positive Semi Definite)이면 $\rightleftarrows$ 모든 고유값 $\lambda_i \geq 0$<br>
+>   ⅱ. 만약 PD (Positive Definite)이면 $\rightleftarrows$ 모든 고유값 $\lambda_i > 0$<br>
+>   ⅲ. 역행렬이 존재한다 $\rightleftarrows$ 모든 고유값 $\lambda_i \neq 0$<br>
+>   $\rightarrow \quad A^{-1}=\mathbf{U} \Lambda^{-1} \mathbf{U}^T$<br>
+>   $$
+>   \qquad \Lambda^{-1} = 
+>   \begin{pmatrix}
+>     \frac{1}{\lambda_1} & 0 & ... & 0 \\ 
+>     0 & \frac{1}{\lambda_2} & ... & 0 \\ 
+>     \vdots & \vdots & \ddots & \vdots \\ 
+>     0 & 0 & ... & \frac{1}{\lambda_n}
+>   \end{pmatrix}
+>   $$
+> 
 > ---
 > **직교대각화**
 >
@@ -146,12 +172,142 @@ $A\mathbb{x} = \lambda \mathbb{x}$<br>
 > = \begin{pmatrix} \lambda_1 u_1 & \lambda_2 u_2 ... \lambda_n u_n\end{pmatrix}
 > \begin{pmatrix} u_1^T \\ u_2^T \\ \vdots \\ u_N^T \end{pmatrix} \\
 > = \sum \limits_{i=1}^n \lambda_i u_i u_i^T
-> $$
+> $$<br>
+> $\rightarrow$ 즉, $\lambda_i$ 는 단위벡터 $u_i$ 방향에 대한 Gain으로 생각할 수 있다.
 >
-> - 즉, $\lambda_i$ 는 단위벡터 $u_i$ 방향에 대한 Gain으로 생각할 수 있다.
+> - Ellisoid(타원체) = $\begin{Bmatrix} \mathbf{x} \| \mathbf{x}^T Q \mathbf{x} \leq 1 \end{Bmatrix}$<br>
+> $$
+> \mathbf{x}^T Q \mathbf{x} = \sum \limits_i \lambda_i \hat{x}_i^2 = \sum \limits_i \frac{\hat{x}_i^2}{(\frac{1}{\sqrt{\lambda_i}})^2} \leq 1
+> $$<br>
+> $\because$ Positive Definite이 대칭행렬이므로 $\lambda_i =(\frac{1}{\sqrt{\lambda_i}})^2$
+>
+> - PSD인 경우 $Q=I$이면 Norm으로 사용 가능하다.
 
 ---
-## 2. 특이값 분해(Singular Value Decomposition)
+## 2. Quadratic Form
+
+### 1) 정의
+
+> **Linear Form**
+>
+> <mark>$f(\mathbf{x}) = \mathbf{a}^T\mathbf{x}$(a는 벡터)</mark><br>
+> $= a_1x_1 + a_2x_2 + ... + a_nx_n$
+> 
+> 1차항으로만 이루어진 x벡터와의 선형결합을 나타내는 식 
+>
+> ---
+> **Bilinear Form**
+>
+> <mark>$f(\mathbf{x, y}) = \mathbf{x}^TA\mathbf{y}$</mark>(A는 행렬)<br>
+> $ = a_{11}x_1y_1 + a_{21}x_2y_1 + ... + a_{mn}x_my_n$
+>
+> 1차항으로 이루어진 2개의 벡터 x,y의 선형결합으로 이루어진 식
+>
+> --- 
+> **Quadratic Form**
+>
+> <mark>$f(\mathbf{x}) = \mathbf{x}^TA\mathbf{x} = \sum_{i=1}^n \sum_{j=1}^n q_{ij} \mathbf{x}_i \mathbf{x}_j$</mark>(A는 행렬)<br>
+> $ = a_{11}x_1x_1 + a_{21}x_2x_1 + ... + a_{mn}x_mx_n$
+>
+> Bilinear Form에서 $y=x$인 Special Form으로 벡터 x의 linear function($f: \mathbb{R}^n \rightarrow \mathbb{R}$)을 의미하는 식<br>
+> _(2차함수의 Vector버전을 나타냄)_
+>
+>> Symmetric
+>> 
+>> 우리는 행렬 $A$는 항상 Symmetic행렬일 것으로 가정할 것이다.<br>
+>> 이는 다음과 같이 Quadratic Form에서는 항상 A를 Symmetric행렬로 바꿀 수 있기 때문이다.
+>>
+>> ⅰ. 우선 $f(x)$의 결과는 Scalar이기 때문에 항상 $f(x) = f(x)^T$이다.<br><br>
+>> ⅱ. 즉, $\mathbf{x}^TA\mathbf{x} = (\mathbf{x}^TA\mathbf{x})^T = \mathbf{x}^TA^T\mathbf{x}$ 이다.<br><br>
+>> ⅲ. 따라서 다음과 같이 같은 $A$와 결과를 내는 Symmetric행렬을 만들 수 있다.<br>
+>> $$
+>> \therefore f(\mathbf{x}) = \mathbf{x}^TA\mathbf{x} = \frac{\mathbf{x}^TA\mathbf{x}}{2} + \frac{\mathbf{x}^TA\mathbf{x}}{2} = \frac{\mathbf{x}^TA\mathbf{x}}{2} + \frac{\mathbf{x}^TA^T\mathbf{x}}{2} = \mathbf{x}^T \frac{(A+A^T)}{2} \mathbf{x}
+>> $$
+
+### 2) PSD, PD
+
+![alt text](/assets/img/post/convex_optimization/quadraticform_example.png)
+
+> Quadratic Form이 가질 수 있는 형태는 다음 5가지와 같다.
+> - ⅰ. Positive Definite(밑으로 볼록)<br>
+>   : $\mathbf{x} = \begin{Bmatrix}0, ..., 0\end{Bmatrix}$인 점을 제외한 모든 $\mathbf{x} \in \mathbb{R}^n$에 대해 $\mathbf{x}^TQ\mathbf{x}>0$이 성립하는 $Q$
+> - ⅱ. Positive Semidefinite(밑으로 볼록)<br>
+>   : 모든 $\mathbf{x} \in \mathbb{R}^n$에 대해 $\mathbf{x}^TQ\mathbf{x} \geq 0$이 성립하는 $Q$
+> - ⅲ. Negative Defineite(위로 볼록)<br>
+>   : $\mathbf{x} = \begin{Bmatrix}0, ..., 0\end{Bmatrix}$인 점을 제외한 모든 $\mathbf{x} \in \mathbb{R}^n$에 대해 $\mathbf{x}^TQ\mathbf{x}>0$이 성립하는 $Q$
+> - ⅳ. Negative Semidefinite(위로 볼록)<br>
+>   : 모든 $\mathbf{x} \in \mathbb{R}^n$에 대해 $\mathbf{x}^TQ\mathbf{x} \geq 0$이 성립하는 $Q$
+> - ⅴ. Indefinite(위로 볼록 + 아래로 볼록)<br>
+>   : 위의 그림에서 "(c)"와 같이 자르는 단면 $\mathbf{x}$에 따라 위로볼록과 아래로볼록이 달라지는 형태의 $Q$<br>
+>   $\rightarrow$ 즉, 최대 최소가 존재하지 않는다.<br>
+>   $\rightarrow \mathbf{x}^TA\mathbf{x}$는 $\infty$와 $-\infty$로 모두 발산한다.  
+> 
+> ---
+> **모양 판별**
+>
+> - 위에서 살펴보았듯이 $f(\mathbf{x}) = \mathbf{x}^TA\mathbf{x}$에서 A는 항상 Symmetric Matrix로 가정할 수 있다.<br>
+> : $\therefore A = U \Lambda U^T$
+>
+> - 즉, $f(\mathbf{x}) = \mathbf{x}^TA\mathbf{x} = \mathbf{x}^T ( U \Lambda U^T ) \mathbf{x} = y^T \Lambda y$<br>
+>   $$
+>   y = U^T \mathbf{x} \\
+>   \Lambda =
+>   \begin{pmatrix}
+>     \lambda_1 & 0 & ... & 0 \\ 
+>     0 & \lambda_2 & ... & 0 \\ 
+>     \vdots & \vdots & \ddots & \vdots \\ 
+>     0 & 0 & ... & \lambda_n
+>   \end{pmatrix} 
+>   $$<br>
+> 
+>> 따라서, $\mathbf{x}^TA\mathbf{x} = \sum_{i=1}^n \sum_{j=1}^n q_{ij} \mathbf{x}_i \mathbf{x}_j$ 이므로<br>
+>>   $\therefore f(\mathbf{x})=y^T \Lambda y=\sum \limits_i \lambda_i y_i^2$
+>>
+>>   ⅰ. 만약 PSD (Positive Semi Definite)이면 $\rightleftarrows A$의 모든 고유값 $\lambda_i \geq 0$<br>
+>>   ⅱ. 만약 PD (Positive Definite)이면 $\rightleftarrows A$의 모든 고유값 $\lambda_i > 0$<br>
+>>  ⅲ. 만약 Indefinite이면 $\rightleftarrows A$의 고유값이 양수와 음수를 모두 가짐
+
+### 3) Ellipse
+
+![alt text](/assets/img/post/convex_optimization/ellipse.png)
+
+> 위의 내용들에 따라 Quadratic Form은 항상 다음과 같은 형태를 갖는다.
+>
+> <mark>$f(\mathbf{x})=\mathbf{x}^TA\mathbf{x} = y^T \Lambda y=\sum_i \lambda_i y_i^2$</mark><br>
+> &#8251; $y=U^T \mathbf{x}$, $\quad U$는 A의 EigenVector, $\quad \Lambda$는 A의 EigenValues 
+> 
+> 이때, f가 PSD인 Quadratic Form이고, 항상 c를 지난다고 하면<br>
+> $f(\mathbf{x})=y^T \Lambda y=\sum \limits_i \lambda_i y_i^2 = \sum \limits_i \frac{y_i^2}{(\sqrt{\frac{1}{\lambda_i}})^2} = c$
+>
+> 즉, 다음을 만족하는 타원의 방정식으로 변형할 수 있다.
+> - 좌표계(기저벡터): $\begin{pmatrix}y_1 & y_2 & ... & y_n \end{pmatrix}$
+> - 축의 길이: $\begin{pmatrix}\frac{1}{\sqrt{\lambda_1}} & \frac{1}{\sqrt{\lambda_2}} & ... & \frac{1}{\sqrt{\lambda_n}} \end{pmatrix}$
+>
+> &#8251; 큰 Eigenvalue를 갖는 방향이 더 짧은 축에 해당된다.
+>
+> ---
+> **Rayleigh Quotient**
+> 
+> - Rayleigh Quotient란?<br>
+>  $A$가 PSD일 때, $R(A, \mathbf{x}) = \frac{\mathbf{x}^T A \mathbf{x}}{\mathbf{x}^T\mathbf{x}}$
+>
+> - **Maximize $R(A, \mathbf{x})$?**<br>
+>   ![alt text](/assets/img/post/convex_optimization/rayleigh_quotient.png)<br>
+>   ⅰ. $\mathbf{x}^T \mathbf{x}$는 원이다$(= \mathbf{x}^T I \mathbf{x})$<br>
+>   ⅱ. $\mathbf{x}^T A \mathbf{x}$는 타원이다.<br>
+>   $\rightarrow$ 즉, $\mathbf{x}^T \mathbf{x}$가 어떤 방향을 가리켜야 타원이 최대가 되는지 찾는 문제이다.
+>
+> 위의 그림에서 1번점과 2번점을 살펴보자.<br>
+> 1번점은 $\mathbf{x}^T A \mathbf{x}=3$인 점을 지나고 2번점은 $\mathbf{x}^T A \mathbf{x}=2$인 점을 지난다.
+>
+>> 즉, 원이 $\mathbf{x}^T A \mathbf{x}$의 단축방향 일수록(Eigenvalue $\lambda$ 가 클수록) 더 큰 값을 갖게 된다.
+>   
+> - 수식적 증명<br>
+> $\begin{pmatrix}\frac{\lambda_{min} \sum_{i=1}^n x_i^2}{\sum_{i=1}^n x_i^2} = \lambda_{min} \end{pmatrix} \leq \frac{\mathbf{x}^T A \mathbf{x}}{\mathbf{x}^T\mathbf{x}} = \frac{\sum_{i=0}^n \lambda_i x_i^2}{\sum_{i=0}^n x_i^2} \leq \begin{pmatrix} \frac{\lambda_{max} \sum_{i=1}^n x_i^2}{\sum_{i=1}^n x_i^2} = \lambda_{max} \end{pmatrix}$
+> 
+
+---
+## 3. 특이값 분해(Singular Value Decomposition)
 
 사용분야: 알고리즘, 자료압축
 
@@ -161,12 +317,10 @@ $A\mathbb{x} = \lambda \mathbb{x}$<br>
 
 > **$A^TA$의 성질**
 > 
-> ---
-> #### 직교대각화
-> 행렬 $A_{M \times N}$는 $A^TA$행렬로 변환시켜 정방행렬로 만들어 대각행렬을 찾을 수 있는데, 이 때의 대각행렬은 직교대각행렬이다.
->
->> $A^TA$는 직교대각화가 가능하다.<br>
->> 이때, $A^TA$의 고유값은 음이 아니다.
+> | | 1. Symmetric Matrics이다 | 2. Positive Semidefinite하다. |
+> |---|---|---|
+> | 증명 | $(A^TA)^T = A^T(A^T)^T = A^TA$ | $\mathbf{x}^T \;A^TA \;\mathbf{x} = (A\mathbf{x})^T A\mathbf{x} = \Vert A\mathbf{x} \Vert^2 \geq 0$ | 
+> | 특징 | ⅰ. Square Matrix이다<br>ⅱ. 고유값이 항상 실수이다.<br>ⅲ. 고유벡터가 모두 직교한다.(직교대각화가 가능)| <mark>ⅰ. $A^TA$의 모든 고유값 $\lambda_i \geq 0$</mark><br>ⅱ. Scalar의 $x^2$와 같은 역할을 한다$(f: \mathbb{R}^n \rightarrow \mathbb{R} \geq 0)$<br> $\rightarrow$ 참고: 행렬의 $A^2$은 PSD를 보장하지 않는다.<br>$\rightarrow$단, A가 Symmetric일 경우는 제외<br>ⅲ. 만약 모든 Column이 선형 독립이면 Positive Definite이다. |
 > 
 > ---
 > #### 특이값
@@ -177,6 +331,9 @@ $A\mathbb{x} = \lambda \mathbb{x}$<br>
 >> ...<br>
 >> $\sigma_n = \sqrt{\lambda_n}$<br>
 >> 을 행렬 $A$의 **특이값**이라고 한다.
+>
+> ---
+> #### 특이행렬
 
 ### 2) 특이값 분해
 
@@ -221,10 +378,18 @@ $A\mathbb{x} = \lambda \mathbb{x}$<br>
 > 이때, $\sigma_1 > \sigma_2 > ... > \sigma_n$이므로 r번째 이하의 &sigma;를 0으로 취급하여 행렬을 압축하는 것을 Rank-r근사라고 한다.
 >
 >> 이때, Rank-r근사에 의한 최소제곱오차는<br>
->> $\underset{rank{\hat{A}} \leq{r}}{min} ||A- \hat{A}||_F = \sqrt{\sigma_{r+1}^2 + \sigma_{r+2}^2 + ... + \sigma_{m}^2}$이다.
+>> $\underset{rank{\hat{A}} \leq{r}}{min} \Vert A- \hat{A} \Vert_F = \sqrt{\sigma_{r+1}^2 + \sigma_{r+2}^2 + ... + \sigma_{m}^2}$이다.
 
 
 
+
+
+
+
+
+
+
+---
 ---
 
 ## 1. LU-분해
