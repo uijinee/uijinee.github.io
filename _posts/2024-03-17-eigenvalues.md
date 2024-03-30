@@ -126,17 +126,23 @@ $$
 >   ⅰ. $(if \; i\neq j) \qquad \mathbf{u}_i^T\mathbf{u}_j = 0$<br>
 >   ⅱ. $(if \; i=j) \qquad \mathbf{u}_i^T\mathbf{u}_j = 1$
 >
-> - 대칭행렬($A^T=A$)을 대각화하면 직교대각화가 된다.<br>
->  $\rightarrow$ <u>대칭행렬의 대각화와 직교대각화는 동치이다.</u>
+> ---
+> **<mark>직교행렬의 성질</mark>**
+> 
+> 1. $Q^TQ = QQ^T = I \quad \rightarrow Q^{-1} = Q^T$
+>
+> 2. $Q^T$또한 직교행렬이다.
+>
+> 3. 직교행렬 $Q$에 의한 곱셈변환은 길이가 보존된다.(내적보존)<br>
+>   $\Vert Q\mathbf{x} \Vert = (Q\mathbf{x})^TQ\mathbf{x} = \mathbf{x}^TQ^TQ\mathbf{x} = \mathbf{x}^T\mathbf{x} = \Vert \mathbf{x} \Vert$
 >
 > ---
-> **<mark>대칭행렬의 성질</mark>**
+> **<mark>대칭행렬($A^T=A$)의 성질</mark>**
 >
 > 1. 고유값이 항상 실수이다.<br>
 >   
 > 2. 고유벡터는 모두 직교한다.<br>
->   $\rightarrow \mathbf{U}^T\mathbf{U} = \mathbf{U}\mathbf{U}^T = I$<br>
->   $\rightarrow \mathbf{U}^{-1} = \mathbf{U}^T $
+>   $\rightarrow $ 대칭행렬의 대각화와 직교대각화는 동치
 > 
 > 3. 동치인 명제들<br>
 >   ⅰ. 만약 PSD (Positive Semi Definite)이면 $\rightleftarrows$ 모든 고유값 $\lambda_i \geq 0$<br>
@@ -303,7 +309,7 @@ $$
 >> 즉, 원이 $\mathbf{x}^T A \mathbf{x}$의 단축방향 일수록(Eigenvalue $\lambda$ 가 클수록) 더 큰 값을 갖게 된다.
 >   
 > - 수식적 증명<br>
-> $\begin{pmatrix}\frac{\lambda_{min} \sum_{i=1}^n x_i^2}{\sum_{i=1}^n x_i^2} = \lambda_{min} \end{pmatrix} \leq \frac{\mathbf{x}^T A \mathbf{x}}{\mathbf{x}^T\mathbf{x}} = \frac{\sum_{i=0}^n \lambda_i x_i^2}{\sum_{i=0}^n x_i^2} \leq \begin{pmatrix} \frac{\lambda_{max} \sum_{i=1}^n x_i^2}{\sum_{i=1}^n x_i^2} = \lambda_{max} \end{pmatrix}$
+> $\begin{pmatrix}\frac{\lambda_{min} \sum_{i=1}^n y_i^2}{\sum_{i=1}^n y_i^2} = \lambda_{min} \end{pmatrix} \leq \frac{\mathbf{x}^T A \mathbf{x}}{\mathbf{x}^T\mathbf{x}} = \frac{\sum_{i=0}^n \lambda_i y_i^2}{\sum_{i=0}^n y_i^2} \leq \begin{pmatrix} \frac{\lambda_{max} \sum_{i=1}^n y_i^2}{\sum_{i=1}^n y_i^2} = \lambda_{max} \end{pmatrix}$
 > 
 
 ---
@@ -320,7 +326,7 @@ $$
 > | | 1. Symmetric Matrics이다 | 2. Positive Semidefinite하다. |
 > |---|---|---|
 > | 증명 | $(A^TA)^T = A^T(A^T)^T = A^TA$ | $\mathbf{x}^T \;A^TA \;\mathbf{x} = (A\mathbf{x})^T A\mathbf{x} = \Vert A\mathbf{x} \Vert^2 \geq 0$ | 
-> | 특징 | ⅰ. Square Matrix이다<br>ⅱ. 고유값이 항상 실수이다.<br>ⅲ. 고유벡터가 모두 직교한다.(직교대각화가 가능)| <mark>ⅰ. $A^TA$의 모든 고유값 $\lambda_i \geq 0$</mark><br>ⅱ. Scalar의 $x^2$와 같은 역할을 한다$(f: \mathbb{R}^n \rightarrow \mathbb{R} \geq 0)$<br> $\rightarrow$ 참고: 행렬의 $A^2$은 PSD를 보장하지 않는다.<br>$\rightarrow$단, A가 Symmetric일 경우는 제외<br>ⅲ. 만약 모든 Column이 선형 독립이면 Positive Definite이다. |
+> | 특징 | ⅰ. Square Matrix이다<br>ⅱ. 고유값이 항상 실수이다.<br>ⅲ. 고유벡터가 모두 직교한다.<br>(직교대각화가 가능)| <mark>ⅰ. $A^TA$의 모든 고유값 $\lambda_i \geq 0$</mark><br>ⅱ. Scalar의 $x^2$와 같은 역할을 한다$(f: \mathbb{R}^n \rightarrow \mathbb{R} \geq 0)$<br> $\rightarrow$ 참고: 행렬의 $A^2$은 PSD를 보장하지 않는다.<br>$\rightarrow$단, A가 Symmetric일 경우는 제외<br>ⅲ. 만약 모든 Column이 선형 독립이면 Positive Definite이다. |
 > 
 > ---
 > #### 특이값
