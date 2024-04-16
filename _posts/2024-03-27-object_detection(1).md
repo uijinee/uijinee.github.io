@@ -1,5 +1,5 @@
 ---
-title: "3. Object Detection(One-Stage)"
+title: "3. Object Detection(Two-Stage)"
 date: 2024-03-27 22:00:00 +0900
 categories: ["Artificial Intelligence", "Deep Learning(Basic)"]
 tags: ["cnn", "detection"]
@@ -270,7 +270,7 @@ use_math: true
 > 　　$\rightarrow$ RPN(Region Proposal Network)
 >
 > ---
-> #### 1. 동작과정
+> #### 동작과정
 >
 > ![alt text](/assets/img/post/deeplearning_basic/faster_rcnn_procedure.png)
 >
@@ -284,7 +284,7 @@ use_math: true
 >   : ROI를 Feature Map에 Pojection하고, 이 영역에 대해 ROI Pooling을 수행한다.
 >
 > ---
-> #### 2. Region Proposal Network(RPN)
+> #### Region Proposal Network(RPN)
 >
 > ![alt text](/assets/img/post/deeplearning_basic/region_proposal_network.png)
 >
@@ -302,4 +302,57 @@ use_math: true
 >   　$\rightarrow K$ 개의 Reg Layer (dx, dy, dw, dh)
 >
 > *(참고: k+Sigmoid로도 가능하지만 논문에서는 2k+Softmax 로 구현하였다고 함)*
+>
+> 3. **NMS**<br>
+>   : NMS를 통해 ROI를 얻는다.
+
+### 5) Feature Pyramid Network(FPN)
+
+![alt text](/assets/img/post/deeplearning_basic/fpn.png)
+
+> #### Purpose
+>
+> 1. Faster R-CNN은 큰 Receptive Field를 갖는 Feature Map을 전달해 주기 때문에, 비교적 작은 물체에 대해서는 성능이 낮아진다.<br>
+>   $\rightarrow$ FPN을 Neck으로 사용
+>
+> _Keyword_
+> - Scale Invariance: 크기이 달라져도 Class예측 성능 유지
+> - Scale Equivariance: 크기가 달라져도 위치 예측 성능 유지
+>
+> ---
+> #### 동작과정
+>
+> | Bottom Up: ResNet | Top Down: Neck |
+> | --- | --- |
+> | ![alt text](/assets/img/post/deeplearning_basic/fpn_bottomup.png) | ![alt text](/assets/img/post/deeplearning_basic/fpn_topdown.png) |
+> | BackBone Model을 통과시켜 Feature Map을 뽑아낸다.<br>이때, 각 Layer에서 Feature Map을 모두 뽑아야 한다.<br>_(본 논문에서는 Backbone으로 ResNet을 사용하였고,_<br> _ResNet의 Pooling 구간을 기준으로 4개를 추출했다.)_<br><br> 　ⅰ. Top<br>　　: Resolution $\Uparrow$, Feature(Semantic meaning) $\Downarrow$<br>　ⅱ. Bottom<br>　　: Resolution $\Downarrow$, Feature(Semantic meaning) $\Uparrow$ | Bottom Up과정에서 나온 Feature Map과<br>Upsampling 과정중 나오는 Feature Map을 합친다.<br>_(Elementwise 덧셈)_<br><br>이때, 두 Feature Map의 크기를 같게 만들어야 한다.<br>　 ⅰ. Bottom Up $\rightarrow 1\times 1$ Conv로 C조절<br>　ⅱ. Top Down $\rightarrow$ Upsampling으로 W, H조절<br>　　_(Nearest Neighbor Upsampling)_ |
+>
+> *여기서 Feature Pyramid Network을 사용하지 않고각 층의 Feature Map을 바로 RPN과 연결해 Predict에 사용하면 어떨까 라는 생각을 할 수 있다.*
+>
+> *하지만 바로 연결할 경우 low level Feature Map에는 Sementic 정보가 부족하게 되고<br> High Level Feature Map에는 Localize 정보가 부족하기 때문에 정보 전달이 제대로 되지 않는다.*
+>
+> ---
+> #### Neck
+> 
+> ![alt text](/assets/img/post/deeplearning_basic/fpn_procedure.png)
+>
+> 일반적으로 CNN은 모델의 깊이가 깊어질수록 Receptive Field의 크기가 커진다.
+>
+> 즉, Faster R-CNN은 CNN의 마지막 Layer의 Feature Map만을 사용하기 때문에 작은 물체에 대해서는 성능이 낮아진다고 해석할 수 있다.
+>
+> Neck은 이 문제를 해결하기 위해 나온 개념으로 Backbone Network와 RPN사이에서 추가적인 작업을 해주는 부분을 의미한다.
+>
+> FPN의 경우 Neck으로 Feature Pyramid Network를 사용하였다.
+>
+> ---
+> #### ROI Projection
+>
+> $k = [k_0 + log(\frac{\sqrt {wh}}{224})]$
+>
+> RPN의 Output으로 Boundbox의 `X`, `Y`, 그리고 `Width`와 `Height`를 구할 수 있었다.
+> 
+> 이제 이를 통해 FPN을 학습시켜야 하는데<br>
+> 현재 "Width"와 "Height"를 위의 식에 대입하면, 해당 Boundbox가 몇번째 Feature Map에서 나온 것인지 알 수 있다.
+>
+> 따라서 먼저 위의 식을 통해 K를 구한 후 이를 활용해 해당 Feature Map에 ROI Projection을 수행하도록 한다.
 >
