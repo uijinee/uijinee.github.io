@@ -81,8 +81,17 @@ use_math: true
 *([참고할 만한 블로그1](https://blog.naver.com/laonple/220925179894))*
 *([참고할 만한 블로그2](https://blog.naver.com/laonple/220930954658))*
 
+### 4) NMS(Non-Maximum Suppression)
 
-### 4) One-Stage & Two-Stage
+![alt text](/assets/img/post/deeplearning_basic/nms.png)
+
+> RPN의 결과로써 나온 ROI중에는 유사한 객체를 표현하는 ROI들이 여럿 존재하게 된다.
+>
+> 이를 막기 위해 Class Score를 기준으로 정렬한 후에, 중복된 영역이 많은 순서대로 ROI후보군을 삭제해 가면서 적절한 것을 Proposal 영역을 최소한으로 골라주는 알고리즘을 말한다.
+>
+> ([자세한 내용](https://velog.io/@abrahamkim98/Deep-Learning%EA%B8%B0%EB%B3%B8-4.-Object-Detectionensemble#1-nms))
+
+### 5) One-Stage & Two-Stage
 
 ![alt text](/assets/img/post/deeplearning_basic/onestage_twostage.png)
 
@@ -98,225 +107,199 @@ use_math: true
 ## 2. Two-Stage Detection Model
 
 ### 1) R-CNN
-<img src= "https://velog.velcdn.com/images/abrahamkim98/post/6f1f6c03-fe9f-4b94-bd23-da4cb05d072f/image.png" width=600>
+
+![alt text](/assets/img/post/deeplearning_basic/rcnn.png)
 
 > #### 동작과정
 >
-> ![alt text](/assets/img/post/deeplearning_basic/rcnn.png)
+> ![alt text](/assets/img/post/deeplearning_basic/rcnn_procedure.png)
 >
-> 1. ROI추출(ex.Selective Search)<br>
+> 1. Region Proposal(ex.Selective Search)<br>
 >   : 먼저 이미지에 Selective Search같은 방법을 통해 약 2000개의 **ROI(Region of Interest)를 추출**한다.
 >
 > 2. Warping<br>
 >   : 각 ROI는 모두 다른 크기를 갖고 있기 때문에 CNN Architecture에 넣기 위해 모두 동일한 크기를 갖도록 **Warping**을 해준다.
 >
 > 3. Feature추출<br>
->   : Warping된 ROI를 **CNN모델에 넣어 Feature를 추출**한다.
+>   : Warping된 ROI를 **CNN모델에 넣어 Feature를 추출**한다.<br>
+>   _(CNN: VGG, Alex)_
 >
 > 4. **Classification 및 Box Regression**<br>
 >   ⅰ. **Classifier**: Feature를 SVM에 넣어 Classification<br>
->   *(SVM을 사용하는 이유는 그냥 과거에 나왔던 모델이라 그런듯 하다.)*<br>
+>   *(SVM을 사용하는 이유는 그냥 과거에 나왔던 모델이라 그런듯 함)*<br>
 >   ⅱ. **Box Regressor**: Bounding Box의 정확한 위치를 학습<br>
 >   *(Selective Search는 물체의 대략적인 위치만 제공)*
 >
 > ---
 > #### Box Regression
 >
-> | | 과정 |
-> | --- | --- |
-> | ![alt text](/assets/img/post/deeplearning_basic/box_regression.png)| 1. 파란색$(p_x, p_y, p_w, p_h) \rightarrow$ Region Proposal <br><br>2. 주황색$(b_x, b_y, b_w, b_h) \rightarrow$ Ground Truth<br><br> 3. $(t_x, t_y, t_w, t_h) \rightarrow$ Prediction<br> - $b_x = p_x+p_wt_x$<br>- $b_y = p_y+p_ht_y$<br>- $b_w = p_we^{t_w}$<br>- $b_h = p_he^{t_h}$ |
+> | | | |
+> |--- | --- | --- |
+> | Output | ![alt text](/assets/img/post/deeplearning_basic/box_regression.png)| 1. 파란색$(p_x, p_y, p_w, p_h) \rightarrow$ Region Proposal <br><br>2. 주황색$(b_x, b_y, b_w, b_h) \rightarrow$ Ground Truth<br><br> 3. Transform $(t_x, t_y, t_w, t_h) \rightarrow$ Prediction<br>　- $b_x = p_x+p_wt_x$<br>　- $b_y = p_y+p_ht_y$<br>　- $b_w = p_we^{t_w}$<br>　- $b_h = p_he^{t_h}$ |
+> | Training | ![alt text](/assets/img/post/deeplearning_basic/bbox_training.png) | 1. Region Proposal과 Ground Truth의 IOU를 비교하여<br>　Negative Sample과 Positive Sample을 나눈다.<br>　- Positive Sample: 객체가 있는 Box<br>　- Negative Sample: 배경이 있는 Box<br><br>2. Training<br>　- Positive Sample: Class와 transform에 대해 학습<br>　- Negative Smple: Class(Background)만 학습 |
 > 
-#### 2. 문제점
-- 모든 ROI에 대해 CNN모델을 통과시켜야 하기 때문에 해야하는 연산이 너무 많다.
+> ---
+> #### 문제점
 >
+> 1. 연산량 $\Uparrow$<br>
+>   : 모든 ROI에 대해 CNN모델을 통과시켜야 하기 때문에 해야하는 연산이 너무 많다.
 >
-- 다양한 크기의 ROI를 정해진 크기로 강제 Warping해주었기 때문에 성 하락 가능성이 존재한다.
+> 2. 다양성 $\Downarrow$<br>
+>   : 다양한 크기의 ROI를 강제로 정해진 크기로 Warping해주었다.
 >
->
->
-- End-to-End학습이 불가능하다.
-*(SVM사용, ROI와 CNN을 따로 학습시킴)*
->
+> 3. End-to-End학습 불가<br>
+>   : Classifier $\rightarrow$ SVM<br>
+>   : Region Proposal $\rightarrow$ Selective Search
 
 ### 2) SPPNet
-<img src= "https://velog.velcdn.com/images/abrahamkim98/post/383d97a0-6bad-4191-831c-13b970e197ca/image.png" width=600>
 
->
-SPPNet은 모든 ROI에 대해 CNN모델을 통과시켜야 하는 R-CNN의 단점을 먼저 CNN을 통해 Feature Map을 얻고 ROI를 결정하는 방식으로 해결하였다.
->
-또한, 다양한 크기의 ROI를 하나의 정해진 크기로 강제 Warping해주어야 하는  R-CNN의 단점은 Spatial Pyramid Pooling을 수행하는 특별한 Layer를 통해 해결해 주었다.
->
----
-#### 1. 동작과정
-<img src= "https://velog.velcdn.com/images/abrahamkim98/post/d0ca0871-a951-489a-985f-3efe4dcb5ab7/image.png" width=400>
->
-- 먼저 이미지를 CNN모델에 넣어 **Feature Map**을 얻는다.
->
->
-- 이 Feature Map에 대해 Region Proposal 방법(Selective Search)을 적용해 ROI를 선별한다.
->
->
-- 이 ROI들에 각각 **SPP(Spatial Pyramid Pooling) Layer**를 통해 고정된 크기의 Feature를 얻는다.
->
->
-- 이렇게 얻은 Feature를 **SVM**에 넣어 Classification을 진행한다.
->
->
-- Clasification이 완료된 물체를 골라 Bounding Box Regression*(Bounding Box의 정확한 위치에 대한 학습)*을 진행한다.
->
----
-#### 2. Spatial Pyramid Pooling
-<img src= "https://velog.velcdn.com/images/abrahamkim98/post/e6db3014-3bdd-4dd5-804d-1e272dbd1d16/image.png" width=350>
->
-- Spatial Bins의 총 개수를 정한다. 이 개수는 입력으로 들어온 ROI를 표현하는 고정된 길이의 Feature가 된다.
-*(ex. `21 bins` = `[4x4, 2x2, 1x1]`)*
->
->
-- 앞서 정한 Spatial Bin을 사용해 Feature Map을 얻기 위해 적절한 Stride와 Window Size를 설정한다.
-(ex. `ROI = 13x13`일 경우 `Stride = 4`, `Window Size = 5`로 설정하여 Max Pooing을 수행할 경우 `Spatial Bin = 3x3`을 얻을 수 있다.)
->
->
-- 각각의 bin(`4x4`, `2x2`, `1x1`)에 대해 위의 과정을 반복하여 처음에 우리가 정했던 Spatial Bin을 모두 얻는다.
->
->
-- 모든 Spatial Bin을 Flatten하고 연결시켜 고정된 길이의 Feature를 얻는다.
->
----
-#### 3. 단점
->
-- End-to-End학습이 불가능하다.
-*(SVM사용, ROI와 CNN을 따로 학습시킴)*
->
----
-([참고한 블로그](https://89douner.tistory.com/89))
+![alt text](/assets/img/post/deeplearning_basic/sppnet.png)
 
-
+> #### Purpose
+> 
+> 1. R-CNN은 모든 ROI에 대해 CNN모델을 통과시켜야 한다.<br>
+>  $\rightarrow$ CNN을 통해 Feature를 먼저 얻은 후 Selective Search
+>
+> 2. R-CNN은 다양한 크기의 ROI를 하나의 정해진 크기로 Warping해주어야 한다.
+> $\rightarrow$ Spatial Pyramid Pooling Layer
+>
+> ---
+> #### 동작과정
+> 
+> ![alt text](/assets/img/post/deeplearning_basic/spp_procedure.png)
+>
+> 1. Feature 추출<br>
+>   : 이미지를 CNN모델에 넣어 **Feature Map**을 추출한다.
+>
+> 2. Region Proposal<br>
+>   : Feature Map에 대해 Region Proposal 방법(Selective Search)을 적용해 ROI를 선별한다.
+>
+> 3. SPP Layer<BR>
+>   : ROI들에 각각 **SPP(Spatial Pyramid Pooling) Layer**를 통해 고정된 크기의 Feature를 얻는다.
+>
+> 4. **Classification 및 Box Regression**<br>
+>   ⅰ. **Classifier**: Feature를 SVM에 넣어 Classification<br>
+>   ⅱ. **Box Regressor**: Bounding Box의 정확한 위치를 학습<br>
+>
+> ---
+> #### Spatial Pyramid Pooling
+>
+> ![alt text](/assets/img/post/deeplearning_basic/spatial_pyramid_pooling.png)
+>
+> 1. Spatial Bins의 총 개수를 결정<br>
+>  : 이 개수는 입력으로 들어온 ROI를 표현하는 고정된 길이의 Feature가 된다.<br>
+>   *(ex. `21 bins` = `[4x4, 2x2, 1x1]`)*
+>
+> 2. Spatial Bin을 얻기 위한 Stride와 Window Size 설정<br>
+>   (ex. `ROI = 13x13`일 경우 `Stride = 4`, `Window Size = 5`로 설정하여 Max Pooing을 수행할 경우 `Spatial Bin = 3x3`을 얻을 수 있다.)
+>
+> 3. Spatial Bin추출
+>
+> 4. Flatten<br>
+> : 모든 Spatial Bin을 Flatten하고 연결시켜 고정된 길이의 Feature를 얻는다.
+>
+> ---
+#### 문제점
+>
+> 1. End-to-End학습 불가
+>
+> ([참고한 블로그](https://89douner.tistory.com/89))
 
 ### 3) Fast R-CNN
 
-<img src= "https://velog.velcdn.com/images/abrahamkim98/post/7c3cc43e-11f8-481a-8bf8-4436785dfbb5/image.png" width=600>
+![alt text](/assets/img/post/deeplearning_basic/fast_rcnn.png)
 
+> #### Purpose
 >
-SPPNet과 크게 다르지 않지만, ROI Projection이 존재하고 Spatial Pyramid Pooling대신 ROI Pooling을 사용한다는 점이 다르다.
+> R-CNN을 해결하기 위해 SPPNet과는 조금 다른 시도를 하였다.
 >
----
-#### 1. 동작과정
-<img src= "https://velog.velcdn.com/images/abrahamkim98/post/ee521e2c-e705-4eac-86a8-ae1f9a2698b0/image.png" width=400>
+> 1. R-CNN은 모든 ROI에 대해 CNN모델을 통과시켜야 한다.<br>
+>  $\rightarrow$ CNN을 통해 Feature를 먼저 얻은 후 ROI를 여기에 Projection
 >
-- 먼저 이미지를 CNN모델에 넣어 Feature Map을 얻는다.
+> 2. R-CNN은 다양한 크기의 ROI를 하나의 정해진 크기로 Warping해주어야 한다.
+> $\rightarrow$ ROI Pooling
+> 
+> ---
+> #### 동작과정
+> 
+> ![alt text](/assets/img/post/deeplearning_basic/fast_rcnn_procedure.png)
+>
+> 1. Region Proposal<br>
+>   : Image에 대해 Region Proposal 방법(Selective Search)을 적용해 ROI를 선별한다.
+>
+> 2. ROI Projection<br>
+>   ⅰ. 이미지를 CNN모델에 넣어 **Feature Map**을 추출한다.<br>
+>   ⅱ. 이 Feature Map에 ROI를 투영(Pojection)한다.<br>
+>   _(ROI를 Feature Map에 맞게 resize해서 크기를 맞춘다.)_
+> 
+> 3. ROI Pooling<br>
+>   : ROI Projection을 통해 얻은 ROI에 대해 **ROI Pooling**을 통해 일정한 크기의 Feature를 얻는다.
+> 
+> 4. **Classification 및 Box Regression**<br>
+>   ⅰ. **Classifier**: Feature를 Softmax FCL에 넣어 Classification<br>
+>   ⅱ. **Box Regressor**: Bounding Box의 정확한 위치를 학습
+> 
+> ---
+> #### ROI Pojection & ROI Pooling
+>
+> | ROI Pojection | ROI Pooling |
+> |---|---|
+> | ![alt text](/assets/img/post/deeplearning_basic/roi_projection.png) | ![alt text](/assets/img/post/deeplearning_basic/roi_pooling.png) |
+> | 이미지에서 얻은 ROI를 그대로<br> Convolution Feature Map에 Pojection |SPP Layer와 마찬가지로<br>bin으로 나누고 bin별로 Max pooling | 
+>
+> _(추가학습: Hierarchical Sampling)_
+> 
+> ---
+> #### 문제점
+>
+> 1. End-to-End학습이 불가<br>
+> *(Selective Search를 사용)*
 >
 >
-- 또 이미지에서 Selective Search를 통해 ROI를 구한다.
->
->
-- 위에서 구한 Feature Map에 **ROI Projection**을 통해 ROI를 다시 얻는다.
->
->
-- ROI Projection을 통해 얻은 ROI에 대해 **ROI Pooling**을 통해 일정한 크기의 Feature를 얻는다.
->
->
-- ROI Pooling을 통해 구한 Output Feature로 Fully Connected Layer 적용 후 
-*Softmax Classifier* 와 
-*Bounding Box Regression (Bounding Box의 정확한 위치에 대한 학습)*
-을 진행한다.
->
----
-#### 2. ROI Projection
-<img src= "https://velog.velcdn.com/images/abrahamkim98/post/cd20551c-3dbe-4511-94bb-7906ef776bc9/image.png" width=350>
->
-Fast R-CNN에서는 Feature Map에서 Selective Search를 수행하는 SPPNet과는 달리, 이미지에서 Selective Search를 진행한 후 얻은 ROI의 위치를 사용한다.
->
-즉, 이미지에서 얻은 ROI를 그대로 Convolution Feature Map에 Projection하여 진행한다.
->
----
-#### 3. ROI Pooling
-<img src= "https://velog.velcdn.com/images/abrahamkim98/post/95f6c020-5ea5-49c7-95f0-387f15c37431/image.png" width=600>
->
-ROI Pooling은 SPP Layer에서
-- 1개의 Pyramid Level만을 사용하고,
-- Target bins = `7*7`
->
-로 설정한 형태와 동일하다고 생각하면 된다.
->
-*(참고: [ROI Pooling gif](https://upload.wikimedia.org/wikipedia/commons/d/dc/RoI_pooling_animated.gif))*
->
----
-#### 3. 단점
->
-- End-to-End학습이 불가능하다.
-*(Selective Search를 사용)*
->
----
-#### 4. 추가학습
-- Hierarchical Sampling
-
 
 ### 4) Faster R-CNN
 
-<img src= "https://velog.velcdn.com/images/abrahamkim98/post/73d0ff01-4853-44ee-80b5-57f842189c0e/image.png" width=600>
+![alt text](/assets/img/post/deeplearning_basic/faster_rcnn.png)
 
+> #### Purpose
 >
-Faster R-CNN은 Fast R-CNN에서 Selective Search를 제외하고 Region Proposal Network라는 것을 추가하여 End-to-End 모델이 될 수 있도록 해 주었다.
+> 1. Region Proposal에서 Selective Search를 사용하는 것은 다음과 같은 문제가 있다.
+>   - End-to-End 학습 불가
+>   - Time Complexity (2000개의 후보중 단 몇개만 고르게 됨)
 >
----
-#### 1. 동작과정
-<img src= "https://velog.velcdn.com/images/abrahamkim98/post/d03084c2-32df-484f-a22a-ad069f070d4c/image.png" width=400>
+> 　　$\rightarrow$ RPN(Region Proposal Network)
 >
-- 먼저 이미지를 CNN모델에 넣어 Feature Map을 얻는다.
+> ---
+> #### 1. 동작과정
 >
+> ![alt text](/assets/img/post/deeplearning_basic/faster_rcnn_procedure.png)
 >
-- Feature Map에서 **Region Proposal Network**와 **Non-Maximum Suppression** 통해 ROI를 얻는다. 
+> 1. Feature 추출<br>
+>   : 이미지를 CNN모델에 넣어 **Feature Map**을 추출한다.
 >
+> 2. Region Proposal Network<br>
+>   : **RPN**을 통해 ROI 후보를 얻고 NMS를 통해 ROI를 결정한다. 
+> 
+> 3. ROI Projection & ROI Pooling<br>
+>   : ROI를 Feature Map에 Pojection하고, 이 영역에 대해 ROI Pooling을 수행한다.
 >
-- 이렇게 얻은 ROI를 활용해 Fast R-CNN과 같이 동작하도록 구성한다.
-(ROI Projection -> ROI Pooling -> Softmax Classification + Bounding Box Regression)
+> ---
+> #### 2. Region Proposal Network(RPN)
 >
-*(두개의 딥러닝 Network를 학습시켜야 하므로 Multi Task Loss를 사용한다..?)*
+> ![alt text](/assets/img/post/deeplearning_basic/region_proposal_network.png)
 >
----
-#### 2. Region Proposal Network(RPN)
+> 1. Anchor 생성<br>
+>   : 우선 CNN모델에서 얻은 Feature Map에서 Cell을 Anchor로 지정한다.<br>
+>   : 이 Anchor를 중심으로 K개의 Anchor Box를 생성한다.<br>
+>   ($K=len(Scale) \times len(ratio)$)<br>
+>   　- Scale: Box자체의 크기 개수<br>
+>   　- Ratio: Box의 가로-세로 비율 개수
 >
-<img src= "https://velog.velcdn.com/images/abrahamkim98/post/c56cd386-1c2b-484b-84f5-ddc0b35ab788/image.png" width=400>
+> 2. **Classification & Regression**<br>
+>   ⅰ. Classification: 배경에 대한 Anchor Box를 제외하기 위해 Objectness를 학습한다<br>
+>   　$\rightarrow K$ 개의 Cls Layer (배경O, 배경X)<br>
+>   ⅱ. Regression: 물체에 대한 Anchor Box의 정확한 위치를 학습한다.<br>
+>   　$\rightarrow K$ 개의 Reg Layer (dx, dy, dw, dh)
 >
-- 우선 CNN모델에서 얻은 Feature Map에 대해 각 Cell을 Anchor로 지정한다.
-그리고 이렇게 지정한 모든 Anchor를 중심에 배치하여 K개의 Anchor Box를 생성한다.
-(K = len(Scale) \* len(ratio))
-*(`Scale은 Box의 크기의 종류 수`, `ratio는 Box의 가로-세로 비율의 개수`)*
+> *(참고: k+Sigmoid로도 가능하지만 논문에서는 2k+Softmax 로 구현하였다고 함)*
 >
->
-- 이때, 이 Anchor Box를 모두 사용하게 될 경우 너무 많은 ROI후보군이 생성된다.
-*(예를들어, `64`\* `64` Feature Map에서 9개의 Anchor Box를 사용할 경우 3만6천개의 ROI가 발생한다.)*
->
->
-- 즉, 배경에 대한 Anchor Box는 제외하기 위해 Anchor는 다음 두 역할에 대해 모두 학습이 되어야 한다.
- : 내용이 배경인지/물체인지 확인
- : Anchor Box와 실제 이미지의 Ground Truth의 위치가 같은지 확인
->
->
-- 때문에 각 Cell별로 두개의 Layer의 입력으로 들어가게 된다. 
-(단, `Anchor수`=`k`개 일때)
-: 2k개의 Cls Layer =>`(배경o, 배경x)`
-: 4k개의 reg Layer =>`(dx, dy, dw, dh)`
->
-*(참고: k+Sigmoid로도 가능하지만 논문에서는 2k+Softmax 로 구현하였다고 함)*
->
-<img src= "https://velog.velcdn.com/images/abrahamkim98/post/c9208e3b-9cf6-478d-90df-e3b37400448e/image.png" width=650>
->
-*(참고그림)*
->
----
-#### 3. Non-Maximum Suppression(NMS)
->
-![](https://velog.velcdn.com/images/abrahamkim98/post/5dcc2dfd-edce-4085-8786-0ff33dbb4c93/image.png)
->
-RPN의 결과로써 나온 ROI중에는 유사한 객체를 표현하는 ROI들이 여럿 존재하게 된다.
->
-이를 막기 위해 Class Score를 기준으로 정렬한 후에, 중복된 영역이 많은 순서대로 ROI후보군을 삭제해 가면서 적절한 것을 Proposal 영역을 최소한으로 골라주는 알고리즘을 말한다.
->
-([자세한 내용](https://velog.io/@abrahamkim98/Deep-Learning%EA%B8%B0%EB%B3%B8-4.-Object-Detectionensemble#1-nms))
-
-
----
-다음장에 계속..
-
----
