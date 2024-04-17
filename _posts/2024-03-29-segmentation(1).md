@@ -12,9 +12,7 @@ use_math: true
 
 ## 1. Background
 
-### 1) Segmentation의 종류
-
-### 2) Upsampling
+### 1) Upsampling
 
 > #### UnPooling
 >
@@ -36,9 +34,27 @@ use_math: true
 > 
 > _(UnPooling은 Channel By Channel로 진행된다.)_
 
+### 2) Dilated Convolution
 
+![alt text](/assets/img/post/deeplearning_basic/dilated_convolution.png)
+
+> Receptive Field를 키우는 방법는 대표적으로 다음의 두개가 존재한다.
+>
+> | 1. **Convolution + MaxPooling** | 2. **Dilated(Atrous) Convolution** |
+> | ![alt text](/assets/img/post/deeplearning_basic/convolution_maxpooling.png) | ![alt text](/assets/img/post/deeplearning_basic/dilated_convolution.png) |
+> | ⅰ. Convolution $\rightarrow$ Convolution<br>ⅱ. Convolution $\rightarrow$ MaxPooling $\rightarrow$ Convolution <br><br> _(방법 (ⅱ)가 더 큰 Receptive Field를 갖는다.)_<br> 　| Dilated를 통해 적은 수의 DownSampling으로도 <br> Receptive Field의 크기를 효과적으로 키운다. |
+> | Receptive Field를 매우 키울 수 있지만 정보의 손실이 많아<br> Upsampling시 낮은 Resolution을 갖는다. | Max Pooling의 단점을 보완한 방법 |
+> 
+> ---
+> #### DilatedNet
+>
+> Dilated Convolution을 DeepLab V1보다 조금 더 잘 활용하여 구성한 모델로 Dilated Net이 있다.
+>
+> Dilated Net은 다양한 Dilate비율을 활용하고,<br>
+> 마지막에는 여러 Dilate비율을 가지고 예측한 후 합치는 Basic Context Module이 가장 큰 특징이다.
+
+---
 ## 2. Semantic Segmentation
-
 
 ### 1) FCN(Fully Convolution Network)
 
@@ -74,6 +90,109 @@ _FCN은 Fully Convolutional Networks의 약자로 FC Layer를 사용하지 않�
 > 
 > 객체의 크기가 크거나 작은 경우 여전히 예측을 잘 하지 못함<br>
 > 객체의 디테일한 모습을 찾지 못함
+
+---
+###  2) U-Net
+
+![alt text](/assets/img/post/deeplearning_basic/unet.png)
+
+> #### Purpose
+>
+> 1. FCN은 낮은 Resolution을 가진 Featuremap을 단 한번의 UpSampling을 통해 키워주었다.<br>
+> $\rightarrow$ Contracting Path와 Expanding Path를 나누어 점진적인 Upsampling 수행
+>
+> 2. FCN은 Skip Connection을 잘 활용하지 못했다.<br>
+> $\rightarrow$ 각 Layer에 대응되도록 Skip Connection 설계
+>
+> ---
+> #### 동작과정
+>
+> | Contracting Path | Expanding Path |
+> | --- | --- |
+> | ![alt text](/assets/img/post/deeplearning_basic/contracting_path.png) | ![alt text](/assets/img/post/deeplearning_basic/expanding_path.png) |
+> | 1. 각 Step마다 두번의 $3 \times 3$Convolution Layer<br>2. 각 Step마다 $2 \times 2$ Max Pooling<br>3. 각 Step마다 Channel이 2배 | 1. 각 Step마다 두번의 $3 \times 3$Convolution Layer<br>2. 각 Step마다 $2 \times 2$ Up Convolution<br>3. 각 Step마다 Channel이 절반 |
+> |  $\therefore$ Pooling시에 Channel을 늘려<br>　해상도가 낮아지는 것을 보완 | $\therefore$ Upsampling시 대응되는<br>　Contracting Path의 Feature를 **Concatenate** <br><br>_(Concatenate시 대상이 되는 두 Feature Map의<br> 크기가 다르다는 문제가 있다.<br> $\rightarrow$ 가운데 부분을 Crop하여 Paste)_|
+>
+> ---
+> #### 주의점
+> 
+> ![alt text](/assets/img/post/deeplearning_basic/downsampling_problem.png)
+>
+> Down Sampling시 홀수 크기의 Feature Map이 존재하면 Upsampling시에 본래의 크기를 알 수 없다.
+> 
+> 즉, 중간에 어떤 Feature맵도 홀수의 크기를 가지면 안된다.
+
+### 3) Deeplab V1
+
+![alt text](/assets/img/post/deeplearning_basic/deeplabv1.png)
+
+> #### Purpose 
+>
+> 1. MaxPooling을 사용해 Receptive Field를 키우는 방법은 정보의 손실이 너무 많다.<br>
+>   $\rightarrow$ **Dilated Convolution**
+>
+> 2. Bi-Linear Interpolation으로만 Upsampling하면 픽셀단위의 정교한 Segmentation이 불가능하다<br>
+>   $\rightarrow$ **CRF**
+>
+> ---
+> #### 동작과정
+>
+> _DeepLab V1의 동작과정은 전반적으로 FCN과 비슷하다._
+> 
+> 1. Reduce Feature Map<br>
+>   : FCN과 마찬가지로 Convolution + Maxpooling으로 Feature Map을 $\frac{1}{8}$으로 줄인다.
+>
+> 2. Dilated Convolution<br>
+>   : 그 뒤부터는 Covolutionalization이 아닌, Dilated Convolution을 사용해<br>
+>   **<u>Feature Map의 크기는 유지하면서도 Receptive Field를 늘린다.</u>**
+> 
+> 3. Upsampling<br>
+>   : Bilinear Interpolation을 사용해 Up Sampling한다.
+> 
+> 4. Post Processing<br>
+>   : Bilinear Interpolation을 통해 한번에 Upsampling할 경우 정교한 Segmentation이 불가능하다.<br>
+>   $\rightarrow$ DeepLab V1에서는 이러한 문제를 해결하기 위해 Dense CRF라는 후처리 기법을 도입하였다.
+>
+>> $\therefore$ FCN과 전반적인 동작과정은 비슷하지만<br>
+>>　Dilated Convolution덕분에 Receptive Field를 효과적으로 늘릴 수 있었고<br>
+>>　CRF라는 기법 덕분에 효과적인 성능향상을 보여주었다.
+> 
+> ---
+> #### CRF
+>
+> ![alt text](/assets/img/post/deeplearning_basic/crf.png)
+> 
+> CRF는 입력으로 (원본 이미지, Segmentation Map) 쌍을 받고 다음과 같은 원리로 각 픽셀의 확률값을 조절한다.
+> - 이미지의 색상이 유사한 픽셀이 가까이 있으면 같은 범주에 속한다.
+> - 이미지의 색상이 유사해도 픽셀 사이의 거리가 멀면 다른 범주에 속한다.
+> 
+> | 동작과정 | 설명 |
+> | --- | --- |
+> | ![alt text](/assets/img/post/deeplearning_basic/crf_procedure(1).png) | 각 픽셀 별 클래스 예측값을 구한다. |
+> | ![alt text](/assets/img/post/deeplearning_basic/crf_procedure(2).png) | Class하나를 골라 이 확률값과 이미지를<br> CRF에 입력하고 이 과정을 반복수행한다. |
+> | ![alt text](/assets/img/post/deeplearning_basic/crf_procedure(3).png) | 다른 Class에 대해서도 같은 과정을 수행한다. | 
+> | ![alt text](/assets/img/post/deeplearning_basic/crf_procedure(4).png) | 위 결과들을 합친다. |
+> 
+> _([공부하기 좋은 블로그](https://ratsgo.github.io/machine%20learning/2017/11/10/CRF/))_ 
+
+### 4) Deeplab V2
+
+![alt text](/assets/img/post/deeplearning_basic/deeplabv2.png)
+
+> #### Purpose
+>
+> 1. DeepLab V1은 Single Path의 Dilated Convolution을 사용했다.<br>
+>   $\rightarrow$ **ASPP**를 사용해 더 다양 Receptive Field를 계산하자
+>
+> _(또, DeepLab V1에서는 VGG를 Backbone으로 사용했지만 V2는 ResNet-101을 사용한다.)_
+> 
+> ---
+> #### ASPP(Atrous Spatial Pyramid Pooling)
+> 
+> | ![alt text](/assets/img/post/deeplearning_basic/aspp.png) | ASPP는 Feature Map을 다양한 Receptive Field를<br>갖도록 Dilated Convolution등으로 계산하고<br> 이 Feature Map을 Concat한다.<br><br>이때, 서로 다른 크기의 Feature Map이 생산되는데<br> 보통 가장 큰 Feature Map에 맞게<br>Bilinear Interpolation으로 Upsampling한 후<br> Concatenate해 준다. |
+
+
+--todo: Deconv Net, FC Dense Net, PSP Net DeepLab V3, DeepLab V3+ --
 
 
 <!--
@@ -258,31 +377,3 @@ DeconvNet과 마찬가지로 Encoder와 Decoder를 활용하여 Output을 추출
 이때, 각 Block은 Dense Block으로 구성되있고, 그림을 보면 알 수 있듯이 Encoder와 Decoder는 Skip Connection으로 다시한번 연결되고 있음을 확인할 수 있다.
 
 -->
----
-###  4) U-Net
-
-<img src="https://velog.velcdn.com/images/abrahamkim98/post/8b310064-5c52-4787-9659-5e4b4a6e7984/image.png" width=600>
-
->
-U-Net모델은 FCN의 Skip Connection구조를 좀더 잘 활용하도록 설계하여 성능을 향상시켰다.
->
----
-#### Contracting Path
-![](https://velog.velcdn.com/images/abrahamkim98/post/00ad8387-684a-4090-91f0-72cbc6f7a2e8/image.png)
-- Convolution Layer
-- Receptive Field의 크기를 키우기 위해 PoolingLayer를 사용해 해상도를 낮추는 대신 채널의 수를 늘림
-- 최종적으로 작은 Activation Map을 얻음
->
----
-#### Expanding Path
-![](https://velog.velcdn.com/images/abrahamkim98/post/a7e5490b-a865-46ba-b133-30c717632ed4/image.png)
-- 위에서 얻은 Activation Map을 UpSampling한다.
-(Upsampling할때 적절한 Stride와 Kernel의 크기를 통해 Overlap Issue를 방지하자)
-- Upsampling할때, 각 Layer마다 대응되는 Contracting Path의 Layer와 Concatenate해준다.
-- Concatenate후 다시 채널사이즈를 줄여주는 작업을 반복한다
->
----
-#### 주의점
-![](https://velog.velcdn.com/images/abrahamkim98/post/1958756d-afda-4275-a7ce-1237530b3385/image.png)
->
-중간에 어떤 Feature맵도 홀수의 크기를 가지면 안된다.
