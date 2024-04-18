@@ -1,0 +1,18 @@
+---
+title: "1. Introduction"
+date: 2024-03-31 22:00:00 +0900
+categories: ["Artificial Intelligence", "Machine Learning"]
+tags: ["deeplearning", "machine learning"]
+use_math: true
+---
+
+# 1. 인공지능이란?
+
+인공지능이란 무엇인가라는 주제에 대해서는 크게 4가지 관점이 존재한다.
+
+| **Thinking Humanly** | **Acting Humanly** |
+| - 인지 신경학<br>　_(인간의 뇌를 모방해야 함)_ | - Turing Test<br>　_(사람과 의사소통이 가능해야 함)_|
+| **Thinking Rationally** | **Acting Rationally** |
+| - 논리학, 확률론<br>　_(논리적인 결론을 내어야 함)_| - 강화학습<br>　_(환경의 변화에 적응하고 행동해야 함)_|
+
+이 관점에 따라 인공지능은 다양한 분야에서 다양한 방법으로 발전해 왔다.
