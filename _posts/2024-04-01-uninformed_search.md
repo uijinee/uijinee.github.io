@@ -1,5 +1,5 @@
 ---
-title: "2. Uninformed Search"
+title: "2. Search"
 date: 2024-04-01 22:00:00 +0900
 categories: ["Artificial Intelligence", "Machine Learning"]
 tags: ["deeplearning", "machine learning"]
@@ -13,6 +13,8 @@ use_math: true
 > 인공지능이 문제를 해결할 때 사용할 수 있는 방법은 앞으로 취할 수 있는 행동들을 미리 시뮬레이션 해보고, 최적의 결과를 내는 행동을 찾는 것이다.
 >
 > 이때, Uninformed Search는 이 최적의 결과가 무엇인지 알 수 없는, 즉 목표까지 얼마나 남았는지 알 수 없는 상태(Uninformed)에서 행동을 찾는 알고리즘이다.
+>
+> 반면에 Informed Search는 이 목표가 정해져 있는 상황에서 행동을 찾는 알고리즘이다.
 
 ### 2) Terms
 
@@ -51,10 +53,10 @@ use_math: true
 
 ### 1) BFS
 
-| | Completeness | Cost Optimality | Time Complexity | Space Complexity |
-| --- | --- | --- | --- | --- |
-| BFS | O | X | $O(b^d)$ | $O(b^d)$ |
-| Dijkstra | O | O | $O(b^{1+\frac{C^*}{\epsilon}})$ | $O(b^{1+\frac{C^*}{\epsilon}})$ |
+| | 평가함수$f(n)$ | Completeness | Cost Optimal | 시간복잡도 | 공간복잡도 | 
+|:---:|---|:---:|:---:|:---:|:---:|
+| BFS | Action 수 | O | X | $O(b^d)$ | $O(b^d)$ |
+| Dijkstra | Start Node $\overset{Cost}{\leftrightarrow}$ Current Node | O | O | $O(b^{1+\frac{C^*}{\epsilon}})$ | $O(b^{1+\frac{C^*}{\epsilon}})$ |
 
 $b$: Branch factor<br>
 $d$: solution의 depth<br>
@@ -68,13 +70,13 @@ $C^*$: Optimal Solution의 Cost
 > ```python
 > def bfs(graph, start, end):
 >   frontier = queue([start])
->   visited = []
->   while frontier:
+>   visited = [start]
+>   while not frontier.is_empty():
 >       node = frontier.pop()
 >       for child in expand(node, graph):
->           if child == end:
+>           if child.state == end:
 >               return child
->           elif not visited[child]:
+>           elif child not in visited:
 >               visited.append(child)
 >               frontier.append(child)
 >   return False
@@ -90,16 +92,16 @@ $C^*$: Optimal Solution의 Cost
 > _(단, Cost는 0보다 커야함)_
 >
 > ```python
-> def dijkstra(graph, start, end, cost)
->   frontier = heapq([start]).with(cost)
->   visited = []
->   while frontier:
+> def dijkstra(graph, start, end)
+>   frontier = heapq([start]).set(node.cost)
+>   visited = [start]
+>   while not frontier.is_empty:
 >       node = frontier.pop()
->       if node == end:
+>       if node.state == end:
 >           return node
->       for child in expand(node):
->           if not visited[child] or child.cost < visited[child].cost:
->               visited[child] = child
+>       for child in expand(node, graph):
+>           if (child not in visited) or (child.cost < visited.find(child).cost):
+>               visited[visited.find(child)] = child
 >               frontier.append(child)
 >   return False
 > ```
@@ -140,14 +142,14 @@ $l$: Depth Limit
 > def DLS(graph, start, end, limit):
 >   frontier = stack([start])
 >   cutoff = False
->   while frontier:
+>   while not frontier.is_empty():
 >       node = frontier.pop()
->       if node == end:
+>       if node.state == end:
 >           return node
->       if node.depth() > limit:
+>       if node.depth > limit:
 >           cutoff = True
 >       elif not cycle(node):
->           for child in expand(graph, node):
+>           for child in expand(node, graph):
 >               frontier.append(child)
 >   return cutoff
 > ```
@@ -183,33 +185,131 @@ $l$: Depth Limit
 > Goal State를 알 때 쓸 수 있는 방법으로 Goal지점과 Start지점에서 모두 Dijkstra 방법으로 Search를 시작하는 방법이다.
 >
 > ```python
-> def bid(graph_f, cost_f, graph_b, cost_b):
->   frontier_f = heapq(front).with(cost_f)
->   frontier_b = heapq(back).with(cost_b)
+> def bid(graph_f, front, graph_b, back):
+>   frontier_f = heapq([front]).set(node.cost)
+>   frontier_b = heapq([back]).set(node.cost)
 > 
->   visited_f = []
->   visited_b = []
+>   visited_f = [front]
+>   visited_b = [back]
 > 
 >   solution = False
 >
 >   while not Terminated:
->       if cost_f(frontier_f.top()) < cost_b(frontier_b.top()):
->           solution = proceed(graph_f, cost_f, frontier_f, visited_f, visited_b)
+>       if frontier_f.top().cost < frontier_b.top().cost:
+>           solution = proceed(graph_f, frontier_f, visited_f, visited_b)
 >       else:
->           solution = proceed(graph_b, cost_b, frontier_b, visited_f, visited_b)
+>           solution = proceed(graph_b, frontier_b, visited_b, visited_f)
 > 
-> def proceed(graph, cost, frontier, visited_1, visited_2):
+> def proceed(graph, cost, frontier, visited_1, visited_2, solution):
 >   node = frontier.pop()
->   for child in expand(graph, node):
->       if not visited_1[child] or child.cost < visited_1[child].cost:
->           visited_1[child] = child
+>   for child in expand(node, graph):
+>       if (child not in visited_1) or child.cost < visited_1.find(child).cost:
+>           visited[visited_1.find(child)] = child
 >           frontier.append(child)
->           if visited_2[child]:
->               solution = join(child, visited_2[child])
+>           if child in visited_2:
+>               solution_temp = join(child, visited_2[child])
+>               if solution_temp.cost < solution.cost:
+>                   solution = solution_temp
 >   return solution
 > ```
 >
 > _(이때, 먼저 연결되었다고 해서 Cost Optimal이라는 보장이 없다.)_
 
 ---
-## 2. Informed Search 
+## 2. Informed(Heuristic) Search 
+
+### 1) Best-First Search
+
+| | 평가함수$f(n)$ | Completeness | Cost Optimal | 시간복잡도 | 공간복잡도 | 
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| GBFS | Current Node $\overset{Cost}{\leftrightarrow}$ Goal Node | X(graph like)<br>O(tree like) | X | $O(b^m)$ | $O(b^m)$ |
+| $A^*$ | Start Node $\overset{Cost}{\leftrightarrow}$ Current Node<br> $+$ <br>Current Node $\overset{Cost}{\leftrightarrow}$ Goal Node | O | O | $x \leq O(b^d)$ | $x \leq O(b^d)$ |
+| $SMA^*$| | O | O | $x \leq O(b^d)$ | $x \leq O(b^d)$ |
+
+> 각 Node들에 대해 평가함수 $f(n)$이 가장 작은 Node들을 확장해 나가며 Search하는 알고리즘이다.<br>
+> 따라서 주로 HEAP을 기반으로 구현한다.
+> 
+> ``` python
+> def Best_First_Search(graph, start, end, cost_func):
+>   frontier = heapq([start]).set(cost_func(node))
+>   visited = [start]
+>   while not frontier.is_empty():
+>       node = frontier.pop()
+>       if node.state == end:
+>           return node
+>       for child in expand(node, graph):
+>           if (child not in visited) or (cost_func(child) < cost_func(visited.find(child))):
+>               visited[visited.find(child)] = child
+>               frontier.append(child)
+>   return False
+> ```
+> 
+> 이때 $f(n)$으로 휴리스틱 함수를 사용하기도 하는데 다음에 주의하자
+> 
+> &#8251; $H(n)$
+>
+> ![alt text](/assets/img/post/machine_learning/consistent_heuristic.png)
+>
+> | Optimal Heuristic Function | Consistent Heuristic Function |
+> | --- | --- |
+> | $h(n) \leq h^*(n)$ | $h(n) \leq c(n, n_{next}) + h(n_{next})$ |
+> | 실제 거리보다 예측 거리가 항상 클 때<br> Optimal하다.| 즉, 다음 Node에서의 Goal까지의 거리가<br> 현재 Node에서 Goal까지의 거리보다 항상 작을 때<br><br>_(Optimal보다 더 까다로운 조건이다.)_| 
+>
+> ---
+> #### Greedy Best-First Search
+>
+> 평가함수가 현재노드부터 Goal Node까지의 Heuristic 추정 거리이다.
+>
+> ```python
+> def Greedy_Best_First_Search(graph, start, end, cost_func):
+>   def cost_func(node):
+>       return distance(node, end)
+>   return Best_First_Search(graph, start, end, cost_func)
+> ```
+>
+> ---
+> #### $A^*$ Search
+>
+> 평가함수가 시작Node부터 현재Node까지의 실제 거리와 현재Node부터 Goal Node까지의 추정 거리를 합한 함수이다. 
+>
+> ```python
+> def A_star(graph, start, end, cost_func):
+>   def cost_func(node):
+>       return node.cost + distance(node, end)
+>   return Best_First_Search(graph, start, end, cost_func)
+> ```
+>
+> ---
+> #### Iterative Deepening $A^*$ Search
+>
+> iterative Deepening(Lengthning) Search와 비슷하게 limit cost를 정한 후 이를 반복적으로 갱신하며 $A^*$ Search를 수행하는 알고리즘이다.
+>
+> 마찬가지로 반복시 cost는 이전 cost의 최솟값으로 갱신한다.
+>
+> ---
+> #### Simpleified Memory-Bounded $A^* $ Search ($SMA^*$)
+>
+> $A^*$를 메모리가 가득 찰때까지 수행하다가<br>
+> 메모리가 가득차면 가장 높은 Cost를 갖는 node들부터 drop해가며 계산하는 방식
+
+### 2) Recursive Best-First Search (RBFS)
+
+| | Completeness | Cost Optimality | Time Complexity | Space Complexity |
+| --- | --- | --- | --- | --- |
+| RBFS | O | O | $O(b^d)$ | $O(bd)$ |
+
+> Depth First와 $A^*$를 결합한 방식
+>
+> ![alt text](/assets/img/post/machine_learning/rbfs.png)
+>
+> 1. DFS를 수행하며 현재 노드에 대한 $f(n)=g(n)+h(n)$을 계산한다.<br>
+> 2. 이때, Sibling 중 $f(n)$ 이 낮은 것($f'(n)$)을 기억해 놓았다가,<br>
+> 3. 자신의 자식의 $f(n)$이 모두 $f'(n)$보다 클 경우 재귀를 풀고 다시 해당 Sibling에 대해 DFS를 수행하는 방식으로 동작한다. 
+>
+> ```python
+> def RBFS(graph, start):
+>   solution, f = _RBFS(graph, start, 1e9)
+> def _RBFS(graph, node, f_limit):
+>   successor = expand(node)
+> 
+> ```
