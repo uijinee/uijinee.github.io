@@ -28,7 +28,6 @@ use_math: true
 > | Satisfaction<br>$M(\alpha)$ | 어떤 문장 $\alpha$가 어떤 Model $m$에서 참이면<br>**<u>m이 $\alpha$를 Satisfy한다</u>**고 정의<br>또는 **<u>m은 $\alpha$의 Model</u>**이라고 정의<br><br> (&#8251; 어떤 문장이 **Satisfiable**하다면 문장을<br> 만족하는 1개의 모델(행)이 존재함) | ![alt text](/assets/img/post/machine_learning/satisfaction_example.png) |
 > | Entailment<br>$\alpha \models \beta$ | $\alpha$가 True면 $\beta$도 항상 True인 Model<br>$= M(\alpha) \subseteq M(\beta)$ | ![alt text](/assets/img/post/machine_learning/entail_example.png) |
 > | Derivation<br>$KB \vdash_i \alpha$ | i를 따라가면 $KB$에서 $\alpha$가 참임을<br> 증명가능할 때<br>_(Entail과 다르게 과정을 알려줘야 함)_ |
-> | Validity | 어떤 문장은 항상 True일 때<br><br> ⅰ. \ | $P \vee \neg P$ |
 >
 > ---
 > #### Inference(추론)
@@ -130,6 +129,7 @@ use_math: true
 > Example
 >
 > | ![alt text](/assets/img/post/machine_learning/wumpus_world(2).png) | 여기서 이번에는 $P_{3, 1}$에 함정이 있다는 것을 확인해 보자<br><br> 1. {2, 1}에 바람이 불면 주변에 함정이 있다.<br>　ⅰ. $B_{2, 1} \Leftrightarrow (P_{1, 1} \vee P_{2, 2} \vee P_{3, 1})$<br>　ⅱ. $B_{2, 1} \Rightarrow (P_{1, 1} \vee P_{2, 2} \vee P_{3, 1})$<br>　ⅲ. $B_{2, 1} \Leftarrow (P_{1, 1} \vee P_{2, 2} \vee P_{3, 1})$<br><br> 2. {2, 1}에 바람이 분다.<br>　ⅰ. $B_{2, 1}$<br>　ⅱ. $(P_{1, 1} \vee P_{2, 2} \vee P_{3, 1})$(Modus Pones)<br><br> 3. $P_{3, 1}$에 함정이 있다.<br> 　ⅰ. $\frac{(P_{1, 1} \vee P_{2, 2} \vee P_{3, 1}), \quad P_{2, 2}}{(P_{1, 1} \vee \neg P_{3, 1})}$<br>　ⅱ. $\frac{(P_{1, 1} \vee P_{3, 1}), \quad \neg P_{1, 1}}{P_{3, 1}}$|
+>
 
 ---
 ## 2. Theorem Proving
@@ -231,13 +231,42 @@ def Foward_Chaining(KB, q):
 
 ### 3) Resolution(분해)
 
+```python
+def resolution(KB, a):
+    clause = conjunction(KB, not a).to_CNF()
+    new = {}
+
+    while True:
+        for i in range(len(clause)):
+            for j in range(len(clause)):
+                if i != j:
+                    resolvents = resove(clause[i], clause[j])   #ex. P V not Q, Q --> P
+                    if resolvents.is_empty():                   #ex. if P V not P --> {}
+                        return True
+                    new.union(resolvents)
+        if new in clauses: # 자기자신이 되었을 때
+            return False
+        clauses = clauses.union(new)
+```
 
 > Knowledge Base에 Definite Clause가 아닌 CNF만 들어있을 경우 사용하는 방법이다.<br><br> 이때, 모든 Sentence는 CNF로 변형이 가능하므로 이 Resolution은 모든 Sentence에 대해 사용이 가능하다.
 >
+> Resolution은 다음과 같은 증명에 의해,<br> 
+> $KB \models \alpha$임을 알아내기 위해서 $KB \wedge \neg \alpha$가 Satisfiable하지 않음을 확인한다.<br>
+> _(즉, $KB \wedge \neg \alpha$를 만족하는 Model이 하나도 존재하지 않다는 것을 확인)_
 >
+>| Validity | 항상 True인 문장은 Valid하다고 정의된다.<br><br> ⅰ. $\alpha$가 Satisfiable $(\overset{동치}{=}) \neg \alpha$는 not Valid<br>ⅱ. $\alpha$가 Valid $(\overset{동치}{=}) \neg \alpha$는 not Satisfialbe<br>ⅲ. $\alpha \models \beta \quad (\overset{동치}{=}) \quad \alpha \Rightarrow \beta$가 Vaild<br>★. $\alpha \models \beta (\overset{동치}{=}) \alpha \wedge \neg \beta$가 Unsatisfialbe | $P \vee \neg P$ |
 >
->
->
+> ---
+> ![alt text](/assets/img/post/machine_learning/wumpus_world(1).png)
+> 
+> | 1. **초기화** | ![alt text](assets/img/post/machine_learning/resolution_processing(1).png)<br><br>**ⅰ. KB, Query**<br>　　$KB:\quad B_{1, 1} \Leftrightarrow (P_{1, 2} \vee P_{2, 1}), \quad \neg B_{1, 1}$<br>　　$Query(\alpha): \quad \neg P_{1, 2}?$<br>**ⅱ. Clause**<br>　　$(B_{1, 1} \Leftrightarrow (P_{1, 2} \vee P_{2, 1})) \wedge (\neg B_{1, 1}) \wedge \neg (\neg P_{1, 2})$<br>　　$\equiv (\neg B_{1, 1} \vee (P_{1, 2} \vee P_{2, 1})) \wedge (\neg(P_{1, 2} \vee P_{2, 1}) \vee B_{1, 1}) \wedge (\neg B_{1, 1}) \wedge P_{1, 2}$<br>　　$\equiv (\neg B_{1, 1} \vee (P_{1, 2} \vee P_{2, 1})) \wedge (\neg P_{1, 2} \vee B_{1, 1}) \wedge (\neg P_{2, 1} \vee B_{1, 1}) \wedge (\neg B_{1, 1}) \wedge P_{1, 2}$|
+> | 2. **임의의 2개를<br>　Resolution** | ![alt text](assets/img/post/machine_learning/resolution_processing(2).png) |
+> | 3. **Empty Clause가<br>　나올 때 까지<br>　반복** | ![alt text](assets/img/post/machine_learning/resolution_processing(3).png)<br> 　**ⅰ. EmptyClause**<br>　　Empty Clause가 나왔다는 것은 $KB \wedge \neg \alpha$가 Unsatisfialbe이라는 뜻이다.<br>　　즉, 주어진 Query(\alpha)는 $KB \models \alpha$로 참인 문장이 된다.<br>　　_(ex. Resolution($P, \neg P$)일 경우)_<br><br>　**ⅱ. Empty Clause가 아닐경우**<br>　　Empty Clause가 없다는 것은 모순이 없다는 뜻이고, 즉 $KB \wedge \neg \alpha$가 참이라는 뜻이다 |
+> 
+> ---
+> #### Result
+> 
 > 이 Resolution은 2번 방법과는 다르게 다음과 같은 장점이 있다.
 > 
 > - Resolution Rule하나만 사용하면 된다.
