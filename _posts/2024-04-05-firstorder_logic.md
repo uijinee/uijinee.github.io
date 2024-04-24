@@ -55,3 +55,16 @@ First-Order logic은 모든 문장을 Object과 Relation이 두개만으로 Worl
 Propositional Logic과 First-Order Logic의 다른점은 변수뿐이다.<br>
 즉, 이 변수를 없애주면 Propositinal Logic을 적용할 수 있다.
 
+> #### Propositionalization
+>
+> 1. Universal Instantiation<br>
+>   : FOL문장에서 $\forall$이 포함된 변수는 Ground Term으로 치환가능하다.
+>
+> 2. Existential Instantiation<br>
+>   : FOL문장에서 $\exists$가 포함된 변수는 KB에 한번도 쓰이지 않은 Constant Symbol로 치환가능하다.
+>
+> 먼저 위 두가지 규칙을 통해 변수와 Quantifier를 없앨 수 있다.
+>
+>> 만약 sentence가 FOL에 의해 KB에 Entail된다면 Complete 알고리즘이다.<br>
+>> _(x, f(x)에서 f(f(x))이렇게 무한하게 늘어날 수 있다.)_
+>

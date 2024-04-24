@@ -32,7 +32,9 @@ use_math: true
 > Encoder는 입력할 Sequential Data를 하나의 정보로 압축하고,<br>
 > Decoder를 통해 이 정보를 사용해 다시 Sequential Data를 만들어내게 된다.
 
-### 2) Seq2Seq
+## 2. Basic Model
+
+### 1) Seq2Seq
 
 ![alt text](/assets/img/post/deeplearning_basic/seq2seq.png)
 
@@ -64,7 +66,7 @@ use_math: true
 >
 > 위의 정보가 정확한 근거는 아니겠지만 실제로 입력 데이터를 반전시킬 경우 성능 향상이 있다고 한다.
 
-### 3) Seq2Seq + Attention
+### 2) Seq2Seq + Attention
 
 ![alt text](/assets/img/post/deeplearning_basic/seq2seq_attention.png)
 
@@ -101,32 +103,114 @@ use_math: true
 >
 > Attention을 활용해 많은 장점을 갖게 되었지만 결국 RNN을 활용해 학습 시켜야 한다.
 >
-> 즉, 입력을 Sequential하게 입력해 학습시켜야 하기 때문에 학습 시간이 오래 걸리고, 입력의 길이가 길어지는데에도 한계가 존재한다ㄴ.
+> 즉, 입력을 Sequential하게 입력해 학습시켜야 하기 때문에 학습 시간이 오래 걸리고, 입력의 길이가 길어지는데에도 한계가 존재한다.
 > 
 > ---
 > [참조한 영상](https://www.youtube.com/watch?v=WsQLdu2JMgI&t=404s)
 > 
 > [참고한 블로그](https://lena-voita.github.io/nlp_course/seq2seq_and_attention.html#)
 
+### 3) Show, Attend, and Tell
 
+![alt text](/assets/img/post/deeplearning_basic/show_attend_tell.png)
 
-
+> #### Purpose
+>
+> 1. 이전 논문인 Show and Tell에서는 기존의 seq2seq과 비슷한 문제들을 갖고 있었다.<br>
+> (항상 같은 Context Vector를 참고하여 캡셔닝하는문제)<br>
+>  $\rightarrow$ **Attention**
+>
+> ---
+> #### 동작과정
+> 
+> | ![alt text](/assets/img/post/deeplearning_basic/show_attend_tell_procedure(1).png) | 1. **Initial Decoder State**<br>　ⅰ) CNN으로 Feature Map을 뽑아낸다.<br>　ⅱ) Feature Map을 Grid로 나눈다.<br>　ⅲ) Global Average Pooling을 통해 Decoder State를 만든다. |
+> | ![alt text](/assets/img/post/deeplearning_basic/show_attend_tell_procedure(2).png) | 2. **Alignment Score**(_($\approx$ Attention Score)_<br> 　Seq2Seq와 마찬가지로 Attention을 통해<br>　$s_0$와 $h_{i, j}$간의 유사도 점수를 구해준다.|
+> | ![alt text](/assets/img/post/deeplearning_basic/show_attend_tell_procedure(3).png) | 3. **Context Vector**<br>  　Seq2Seq와 마찬가지로 Softmax를 통해<br>　Alignment Weights를 구하고 기존의 Feature Map($h_{i, j}$)와<br>　Weighted Sum을 통해 Context Vector를 구한다. |
+> | ![alt text](/assets/img/post/deeplearning_basic/show_attend_tell_procedure(4).png)| 4. **Predict**<br>　ⅰ) 기존의 Decoder State $s_0$와 Context Vector를 합친다.<br>　ⅱ) Start Token인 $y_0$를 사용해 Decoder에서<br>　　Prediction을 수행한다. |
+> | ![alt text](/assets/img/post/deeplearning_basic/show_attend_tell.png) | 5. **반복**<br>　위의 과정을 반복 수행하며 문장을 만들어 나간다.|
+>
+> ---
+> #### Alignment Weight 시각화
+> 
+> ![alt text](/assets/img/post/deeplearning_basic/alignment_weight.png)
 
 ---
+## 3. Attention Layer
 
-#### 요약
+위의 Basic Model과 같이 Attention Model이 주목받기 시작하자, 이 후부터는 이 Attention과정을 CNN과 같은 하나의 Layer로 취급하여 모델을 설계하기 시작한다.
 
-Seq2Seq는 Encoder와 Decoder를 통해 자연어처리에 대한 방법을 제시했지만, 고정된 크기의 Context Vector를 사용해 그 성능이 줄었다.
+| | Attention Layer | Show, Attend and tell |
+|:---:| --- | --- |
+| | ![alt text](/assets/img/post/deeplearning_basic/attention_layer.png) | ![alt text](/assets/img/post/deeplearning_basic/show_attend_tell_procedure(3).png) |
+| Query<br>_(알고싶은 대상)_ | $Query$ | $s_0$ |
+| Key<br>_(비교할 대상)_| $Key$<br>_(InputVector $X$에 MLP를 적용해 생성)_ | {$h_{i, j}$} |
+| Context Vector<br>생성 도구 | $Value$<br>_(InputVector $X$에 MLP를 적용해 생성)_  | {$h_{i, j}$} |
+| Output<br>_(Context Vector)_ | $Y=AV$<br>_(Weighted Sum)_ | $C=AH$<br>_(Weighted Sum)_ |
+| Similarity함수 | Scaled Dot-Product<br>$E=\frac{QK^T}{\sqrt{D_Q}}$<br>_(Q, K의 길이가 클수록 Softmax에 의해<br> 0에 가까운 Gradient가 많이 발생한다.)<br> (Gradient Vanishing현상)_ | - Dot-Product Attention($E=QK^T$)<br> - Bilinear Attention<br> - Multi-Layer Perceptron Attetion |
 
-이를 해결하기 위해 Attention기법이 탄생했는데, 모든 단어에서 각각 Context Vector를 도출하고 이에 Attention을 주는 방법을 통해 성능을 향상시켰다.
+_(Attention Layer는 총 2개의 Learnable Parameter를 갖는다.)_
 
-하지만 Attention기법도 결국 RNN Cell을 이용해야 하기 때문에 번역 시간이 오래걸린다는 단점이 존재했다.
+### 1) Transformer
 
-이에 2017년도에 Attention is All You Need라는 제목으로 발표된 논문에서는 RNN Cell을 아예 제거하고, 오직 Attention만을 통해 학습시키는 Transforemr구조를 제시하게 된다.
+> 2017년도에 Attention is All You Need라는 제목으로 발표된 논문에서는 RNN Cell을 아예 제거하고,<br>
+> 오직 위의 Attention Layer만을 사용해 학습시키는 Transformer구조가 제시된다
+> 
+> _(Attention is All you Need라니... YOLO와 더불어 자극적인 논문 제목 중 하나인 것 같다.)_
+>
+> ---
+> #### Purpose(Self Attention Layer)
+>
+> 1. Attention Layer의 체계적인 Design<br>
+>  $\rightarrow$ **Self Attention Layer**
+>
+> | Layer |  | 특징 |
+> | --- | --- | --- |
+> | **Self Attention** | ![alt text](/assets/img/post/deeplearning_basic/self_attention_layer.png) | 1. Query를 별도로 입력해주는 것이 아닌<br>　InputVector$X$로부터 MLP를 적용해 생성한다.<br> 　$\Rightarrow$ 3개의 Learnable Layer<br><br>2. 벡터들의 집합으로서 동작한다.<br>　$if (X_1, X_2, X_3 \rightarrow X_3, X_1, X_2)$<br>　$\Rightarrow (Y_1, Y_2, Y_3 \rightarrow Y_3, Y_1, Y_2)$<br>　$\therefore$ InputVector의 순서정보를 알지 못한다.<br>　$\Rightarrow$ Positional Encoding이 필요하다.<br>　　![alt text](/assets/img/post/deeplearning_basic/positional_embeding.png) (concat)  |
+> | **Masked**<br> **Self Attention** | ![alt text](/assets/img/post/deeplearning_basic/masked_self_attention.png) | 기존의 Encoder Decoder 구조의 모델들은<br> 입력값을 순차적으로 전달받아 $t+1$시점의<br> 예측을 위해 $t$까지의 데이터만 쓸 수 있었다.<br><br> 하지만 Transformer는 한번에 모든 입력을<br>받기 때문에 과거 시점의 입력을 예측할 때<br> 미래시점의 입력도 참고할 수 있다. <br><br> 이를 방지하기 위해 사용하는 것이<br> **<u>Look a Head Mask</u>**이다. |
+> | **Multi-Head**<br> **Self Attention** | ![alt text](/assets/img/post/deeplearning_basic/multi-head_self_attention.png) | n개의 **Self Attention Layer**를<br> **<u>Parallel</u>**하게 동작하도록 구성한 Layer이다. |
+>
+> ---
+> #### Transformer
+> 
+> | | Transformer Block | Transformer Architecture |
+> | --- | --- | --- |
+> | 그림 | ![alt text](/assets/img/post/deeplearning_basic/transformer_block.png) | ![alt text](/assets/img/post/deeplearning_basic/transformer_architecture.png)  |
+> | 특징 | - **Layer Normalization**<br> | - Encoder Decoder Design<br>- Sequence of Transformer Block|
+> 
 
----
-## 3. Transformer
+### 2) VIT(Vision Transformer)
 
+![alt text](/assets/img/post/deeplearning_basic/vit.png)
+
+> #### Purpose
+> 
+> 1. Attention Module을 Image에도 적용시켜보고자 함<br>
+>  ⅰ) 방법1: CNN Architecture사이에 Self-Attention Layer를 넣는다<br>　$\rightarrow$ 그래도 CNN인건 변하지 않는다.<br>
+>  ⅱ) 방법2: Pixel의 관계를 계산할 때 Convolution대신 Self-Attention을 넣는다<br>　$\rightarrow$ 구현이 힘들고 성능도 별로<br>
+>  ⅲ) 방법3: image를 Resize $\rightarrow$ flatten 하고 이 Image에 대해 Self-Attention을 한다<br>　$\rightarrow$ resize결과가 $R \times R$일경우 Self Attention에서 $R^2 \times R^2$ 의 메모리가 필요하다.<br>
+> **ⅳ) 방법4:** Image를 Patch별로 나눈 후 linear projection하고 이것들에 대해 Self-Attention을 한다<br> 　$\rightarrow$ **Vision Transformer**
+> 
+> ---
+> #### 동작과정
+>
+> | ![alt text](/assets/img/post/deeplearning_basic/vit_process(1).png) | 1. **Linear Projection**<br>　MLP나 CNN을 사용해 각 Patch들을 $D$차원 Vector로 Flatten한다.<br>　_(각 패치의 크기가 $16 \times 16 \times 3$일 때,<br>　mlp weight의 경우 $16 \times 16 \times 3 \times D$의 크기를 갖는다)_ |
+> | ![alt text](/assets/img/post/deeplearning_basic/vit_process(2).png) | 2. **Positional Embedding**<br>　각 Patch에 Positional Embedding을 적용한다.<br>　이 Embedding Vector들은 독립적으로 학습된다. |
+> | ![alt text](/assets/img/post/deeplearning_basic/vit_process(3).png) | 3. **Transformer**<br>　Transformer를 통해 Patch들을 가공한다.<br>　- 이때, 당시 nlp에서 Convention이던 Classification Token을 추가<br>　- 대응하는 Output은 전체 Feature를 표현하는 Global Vector |
+>
+
+### 3) Swin Transformer
+
+> #### Purpose 
+>
+> 1. ViT는 CNN에 비해 Inductive Bias가 적다<br>　$\rightarrow$즉, 학습을 위해서 매우 많은 데이터가 필요하다.
+>
+> 2. CNN은 깊어질수록 Resolution은 감소하고 Channel은 증가하는 Hierarchical구조를 갖는다.<br>　$\rightarrow$ 반면에 ViT는 모든 Block이 같은 Resolution을 갖는 Isotropic Architecture를 갖는다.
+> 
+
+### 4) MLP Mixer
+
+
+<!--
 ### 1) Idea
 
 <img src="https://velog.velcdn.com/images/abrahamkim98/post/ded2c55a-12f5-4232-926e-a8d0cbb0f721/image.png" width=450>
@@ -321,3 +405,4 @@ Encoder의 경우 예측을 위해 사용할 수 있는
 ---
 # 코드
 
+-->
