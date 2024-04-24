@@ -1,5 +1,5 @@
 ---
-title: "4. Object Detection(One-Stage)"
+title: "5. Object Detection(One-Stage)"
 date: 2024-03-28 22:00:00 +0900
 categories: ["Artificial Intelligence", "Deep Learning(Basic)"]
 tags: ["cnn", "detection"]

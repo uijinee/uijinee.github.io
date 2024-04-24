@@ -14,7 +14,9 @@ use_math: true
 
 ![alt text](/assets/img/post/deeplearning_basic/sequentialdata.png)
 
-> 우리가 앞서 배웠던 RNN모델들은 Sequential Data를 Fixed Data로 바꾸는 모델이었지만 여기서는 즉 Sequential Data를 다른 Sequential Data로 변형해 주는 방법을 알아볼 것이다.
+> RNN모델들은 Sequential Data를 Fixed Data로 바꾸는 모델이었다.
+>
+> 이번 장에서는 Sequential Data를 다른 Sequential Data로 변형해 주는 방법을 알아보자
 >
 > 이 때, 가장 큰 문제는 <u>입력의 길이와 출력의 길이가 다르기 때문에</u> 일반적인 RNN 모델들을 바로 사용할 수 없다는 것이다.
 >
@@ -34,23 +36,22 @@ use_math: true
 
 ![alt text](/assets/img/post/deeplearning_basic/seq2seq.png)
 
-> **1. Fixed Size Context Vector**
+> **Fixed Size Context Vector**
 > 
-> Seq2Seq에서는 RNN기반의 Encoder를 통해 하나의 **고정된 크기의** Context Vector를 생성한다.<br>
-*(이 값을 다음 Encoder에 넣기도 한다.)*
+> Seq2Seq에서는 RNN기반의 Encoder를 통해 하나의 **고정된 크기의** Context Vector를 생성한다.
 >
 > Context Vector는 Start Token과 함께 Decoder에 들어가 단어를 하나 생성한다.<br>
 > 이후부터는 생성된 단어를 다시 Decoder에 넣는 과정을 End Token이 나올때 까지 반복한다.
 >
->> 기존의 Seq2Seq은 고정된 Size의 Context Vector를 사용하기 때문에<br>
->> 입력 문장의 길이가 길어질 경우, Vector가 이 정보를 표현할 수 없게되어 성능이 매우 떨어진다는 단점이 있다.
+> - **단점**<br>
+>  : 고정된 Size의 Context Vector를 사용하기 때문에 입력 문장의 길이가 길어질 경우, Vector가 이 정보를 표현할 수 없어 성능이 매우 떨어진다.
 > 
 > ---
-> **2. Encoder Decoder**
+> **Encoder Decoder**
 >
 > ![alt text](/assets/img/post/deeplearning_basic/seq2seq_encoderdecoder.png)
 >
-> Encoder와 Decoder로 일반 RNN을 사용할 경우<br>
+> Encoder와 Decoder로 Vanila RNN을 사용할 경우<br>
 > Exploding/Vanishing Gradient에 빠질 가능성이 크다. 
 >
 > 따라서 보통 LSTM을 가지고 Encoder와 Decoder를 만든다.
@@ -65,58 +66,51 @@ use_math: true
 
 ### 3) Seq2Seq + Attention
 
-### 1) Idea
+![alt text](/assets/img/post/deeplearning_basic/seq2seq_attention.png)
 
-<img src="https://velog.velcdn.com/images/abrahamkim98/post/6a9d6684-89d1-4f50-8100-af052895e617/image.png">
-
+> #### Purpose
 >
-위의 Seq2Seq모델의 단점은, 고정된 크기의 Context Vector를 사용해 발생하였다.
+> 1. Seq2Seq은 고정된 크기의 ContextVector를 사용해 모든 정보를 압축하여 정보의 손실(Bottleneck)이 발생한다.<br>
+>  $\rightarrow$ **Non-Fixed size Context Vector**
 >
-Attention 모델에서는 이 문제를 해결하기 위해 RNN모델에 Sequetial Data를 넣을 때 나오는 모든 Output을 이용하도록 해 주었다.
+> 2. RNN의 고전적인 문제인 Vanishing Gradient문제가 여전히 존재한다.<br>
+>  $\rightarrow$ **Attention**<br>
+>  　_(이 외에도 각각의 State에 가중치를 사용해 State별로 중요한 단어들을 학습할 수 있다는 장점등이 있다.)_
 >
-예를들어 "I love You"를 RNN에 입력할 때, "I"를 넣었을 때의 State `a`, "love"까지 넣었을 때의 State `b`, "You"까지 넣었을 때의 State `c`를 모두 고려해 `abc`라는 Context Vector를 만드는 것이다.
+> ---
+> #### 동작과정
 >
-> **주요특징**
+> | ![alt text](/assets/img/post/deeplearning_basic/seq2seq_attention_process(1).png) | 1. **Initiate Decoder State**<br>　먼저 RNN을 반복하여 통과시켜<br>　Initial Decoder State를 만든다. |
+> | ![alt text](/assets/img/post/deeplearning_basic/seq2seq_attention_process(2).png)<br>![alt text](/assets/img/post/deeplearning_basic/how_to_attention.png) | 2. **Attention Score**<br>　이 Decoder State(1개)와<br>　각 단계의 Encoder State(n개)로<br>　각각 Attention연산을 수행한다.<br><br>　　Attention시 사용할 수 있는 방법은 다음과 같다.<br>　　- Dot-Product Attention<br>　　- Bilinear Attention<br>　　- Multi-Layer Perceptron Attetion |
+> | ![alt text](/assets/img/post/deeplearning_basic/seq2seq_attention_process(3).png) | 3. **Softmax**<br>　Attention 결과에 Softmax를 씌워 확률로 만든다.<br>　이를 통해, Decoder에서는 현재 어떤 단어에<br>　얼마나 집중해야 할 지 알 수 있다. |
+> | ![alt text](/assets/img/post/deeplearning_basic/seq2seq_attention_process(4).png) | 4. **Attention Value**_(Context Vector)_<br>　입력 단어들을 통해 생성됐던 Hidden State에 대해<br>　Softmax를 통과한 Attention Score와<br>　가중합(Weighted Sum)한다. |
+> | ![alt text](/assets/img/post/deeplearning_basic/seq2seq_attention_process(5).png) | 5. **Decoder**<br>　ⅰ) Attention Value의 결과를 반영하기 위해<br>　　기존의 Decoder State와 Concatenate한다.<br>　ⅱ) Concatenate된 신경망은 다시 신경망을 거쳐<br>　　기존의 Decoder State와 크기를 맞춰준다.<br>　ⅲ) 마지막으로 이 State와 Token을 사용해 <br>　　다음에 나올 단어를 예측한다. |
 > 
-> 1. **Non-Fixed size Context Vector**<br>
->  : 문장의 길이에 따라 달라지는 Size를 갖는다
+> ---
+> #### Teacher Forcing
 >
-> 2. **Attention**<br>
->  : 각각의 State에 가중치를 주어 각 State별로 중요한 단어들을 학습할 수 있다.
+> Seq2Seq에서는 Decoder의 결과(출력된 값)을 다시 다음 Decoder의 Token으로 사용한다.<br>
+> 이때, 학습이 되기 전에는 Prediction을 수행하면 우리가 원하지 않을 결가 나온다는 것이 자명하다.<br>
+>
+>> 즉, 다음 Token부터는 엉뚱한 값을 넣게 된다.
 > 
----
-#### Attention 모델의 장점
+> 이를 방지하기 위해 학습시에는 예측 값을 Token으로 사용하는 것이 아닌, 정답값을 따로 넣어 Token으로 사용한다.
+> 
+> ---
+> #### 단점
 >
-<img src="https://velog.velcdn.com/images/abrahamkim98/post/4c27cac1-d929-4d1d-b933-0f9ad894da23/image.png" width=450>
+> Attention을 활용해 많은 장점을 갖게 되었지만 결국 RNN을 활용해 학습 시켜야 한다.
 >
-Attention모델의 장점은 크게 2개가 있다.
->
-1. Context Vector가 고정된 Size를 갖지 않고, 문장의 길이에 따라 달라지는 Size를 갖는다.
->
-2.  각각의 State에 가중치를 주어 우리가 집중해야 할 단어들을 선정할 수 있도록 설계할 수 있다.
->
-1번은 앞서 설명했기 때문에 2번을 잠시 언급해 보자면 먼저 Context Vector는 각각의 단어에 대한 Output을 갖고있다.
->
-즉, 이 Context Vector에 대해 가중치 벡터를 곱하게 되면 각 단어에 대해 중요한 단어와 상대적으로 덜 중요한 단어에 대한 단서를 학습시킬 수 있게 된다. 
->
----
-[참조한 영상](https://www.youtube.com/watch?v=WsQLdu2JMgI&t=404s)
+> 즉, 입력을 Sequential하게 입력해 학습시켜야 하기 때문에 학습 시간이 오래 걸리고, 입력의 길이가 길어지는데에도 한계가 존재한다ㄴ.
+> 
+> ---
+> [참조한 영상](https://www.youtube.com/watch?v=WsQLdu2JMgI&t=404s)
+> 
+> [참고한 블로그](https://lena-voita.github.io/nlp_course/seq2seq_and_attention.html#)
 
-### 2) Teacher Forcing
-<img src="https://velog.velcdn.com/images/abrahamkim98/post/ba874877-2772-4ae1-a90f-fc24af1f1814/image.png" width=450>
 
->
-학습이 완료되기 전 우리는 Decoder부분에서 Prediction값을 다음 Decoder에 넣는 작업이 필요하다.
->
-하지만 이 때, 잘못되 Prediction을 넣을 경우 어차피 우리가 원하는 결과가 나오지 않기 때문에 학습하는데 문제가 발생한다.
->
-이 문제를 해결하기 위해 학습시에 예측값을 입력하는 것이 아닌 정답값을 따로 넣어 학습을 시키는 방법을 Teacher Forcing이라고 한다.
 
-### 3) 단점
->
-Attention을 활용해 많은 장점을 갖게 되었지만 결국 RNN을 활용해 학습 시켜야 한다는 단점이 존재했다.
->
-즉, 입력을 Sequential하게 입력해 학습시켜야 하기 때문에 학습 시간이 오래 걸리고, 입력의 길이가 길어지는데에도 한계가 존재한다는 것이다.
+
 
 ---
 

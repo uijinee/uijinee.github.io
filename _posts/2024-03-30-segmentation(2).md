@@ -1,5 +1,5 @@
 ---
-title: "6. Segmentation(Instance, Panoptic)"
+title: "7. Segmentation(Instance, Panoptic)"
 date: 2024-03-30 22:00:00 +0900
 categories: ["Artificial Intelligence", "Deep Learning(Basic)"]
 tags: ["cnn", "segmentation"]
