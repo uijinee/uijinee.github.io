@@ -209,7 +209,10 @@ use_math: true
 
 > $\mathcal{D}(f)$가 Convex이고 모든 $\alpha \in \mathbb{R}$에 대해서 $S_\alpha = \begin{Bmatrix}\mathbf{x} \in \mathcal{D}(f) \| f(\mathbf{x}) \leq \alpha\end{Bmatrix}$가 Convex Set이면<br>
 > f는 QuasiConvex이다.
-> 
+>
+> $\mathcal{D}(f)$가 Convex이고 모든 $\alpha \in \mathbb{R}$에 대해서 $S_\alpha = \begin{Bmatrix}\mathbf{x} \in \mathcal{D}(f) \| f(\mathbf{x}) \geq \alpha\end{Bmatrix}$가 Convex Set이면<br>
+> f는 QuasiConcave이다. 
+>
 > ---
 > #### Preserving
 >
@@ -221,6 +224,19 @@ use_math: true
 
 ### 2) Example
 
+> | Quasiconvex | Quasiconcave | Quasilinear |
+> | --- | --- | --- |
+> | ⅰ. $\sqrt{\vert x \vert}$<br>ⅱ. $f(x) = \frac{\Vert \mathbf{x} - a \Vert_2}{\Vert \mathbf{x} - b \Vert_2}$<br> $\quad (\mathcal{D}(f) = \begin{Bmatrix}\mathbf{x} \| \Vert \mathbf{x}-a \Vert_2 \leq \Vert \mathbf{x} - b \Vert_2 \end{Bmatrix})$ | ⅰ. $f(x_1, x_2) = x_1x_2$<br> $\quad (\mathbf{x_1}, \mathbf{x_2} \in \mathbb{R}_{++}^n)$ | ⅰ. $\text{ceil}(x)$<br> ⅱ. $\text{log}(x)$<br> ⅲ. $f(x) = \frac{a^T\mathbf{x} + b}{c^T\mathbf{x} + d}$<br> $\quad (\mathcal{D}(f) = \begin{Bmatrix}\mathbf{x} \| c^T\mathbf{x}+d >0\end{Bmatrix})$ |
+>
+> ---
+> **Proof**
+> 
+> | | Quasiconvex | Quasiconcave |
+> | --- | --- | --- |
+> | 1. $f(x_1, x_2) = x_1x_2$<br> $\quad (\mathbf{x_1}, \mathbf{x_2} \in \mathbb{R}_{++}^n)$ | $$x_1x_2 \leq \alpha \\ log(x_1 x_2) \leq log(\alpha) \\  log(x_1) + log(x_2) \leq log(\alpha) \\ \Rightarrow \text{not Quasiconvex}$$_(Concave함수에서 어떤 값보다 작은부분)_ | $$... \\ log(x_1) + log(x_2) \geq log(\alpha) \\ \Rightarrow Quasiconcave$$_(Concave함수에서 어떤 값보다 큰 부분)_ |
+> | 2. $f(x) = \frac{a^T\mathbf{x} + b}{c^T\mathbf{x} + d}$ | $$\frac{a^T\mathbf{x} + b}{c^T\mathbf{x} + d} \leq \alpha \\ a^T\mathbf{x} + b \leq \alpha (c^T\mathbf{x} + d) \\ (a^T-\alpha c^T)\mathbf{x} \leq  \alpha d - b \\ \Rightarrow Quasiconvex $$ _(Half Space꼴)_ | $$ ... \\   (a^T-\alpha c^T)\mathbf{x} \geq  \alpha d - b \\ \Rightarrow \text{Quasiconcave} $$_(Half Space꼴)_ |
+> | 3. $f(x) = \frac{\Vert \mathbf{x} - a \Vert_2}{\Vert \mathbf{x} - b \Vert_2}$<br> | $$\frac{\Vert \mathbf{x} - a \Vert_2}{\Vert \mathbf{x} - b \Vert_2} \leq \alpha \\ \Vert \mathbf{x} - a \Vert_2^2 \leq \alpha^2 \Vert \mathbf{x} - b \Vert_2^2 \\ (1-\alpha^2) \Vert \mathbf{x} \Vert^2 + □ \\ \quad \\ if) \; \mathcal{D}(f) = \begin{Bmatrix}\mathbf{x} \| \Vert \mathbf{x}-a \Vert_2 \leq \Vert \mathbf{x} - b \Vert_2 \end{Bmatrix} \\ \Rightarrow Quasiconvex$$_(계수가 양수인 Quadratic Form)_ |
+>  
 
 ---
 ## 5. Log Concave
@@ -255,3 +271,15 @@ use_math: true
 
 ### 2) Example
 
+> | Log-Convex | Log-Concave |
+> | --- | --- |
+> | ⅰ. $x^a \quad a \geq 0$ | ⅰ. $x^a \quad a \leq 0$<br>ⅱ. $\Phi(x) = \frac{1}{\sqrt{2 \pi}} \int_{-\infty}^x e^{-\frac{u^2}{2}} du$ |
+> 
+> ---
+> **Proof**
+>
+> | | Proof |
+> | --- | --- |
+> | 1. Logistic Function<br> $\quad f(x) = \frac{e^x}{1+e^x}$ | $$log(f(x)) = log(e^x) - log(1+e^x) = x - log(1+e^x) \\ \nabla^2 log(f(x)) = \frac{-e^x}{(1+e^x)^2} < 0 \\ \Rightarrow \text{log-concave}$$ |
+> | 2. Harmonic Mean<br> $\quad f(x) = \frac{1}{\sum_{i=1}^n x_i^{-1}}$ | $$log(f(x)) = -log(\sum \limits_{i=1}^n x_i^{-1}) = -log(\sum \limits_{i=1}^n e^{-log(x_i)}) \\ = h(g(x)) \qquad (h(x): \text{log-sum-exp}, \quad g(x):-log(x)) \\ \Rightarrow \text{log-concave}$$ |
+> | 3. Product Over Sum <br> $\quad f(x) = \frac{\prod_{i=1}^n x_i}{\sum_{i=1}^n x_i}$| |
