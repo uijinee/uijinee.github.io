@@ -36,14 +36,14 @@ use_math: true
 >>
 >> 1. 내적과 외적
 >>      - $\textbf{x, c} \in \mathbb{R^n}$
->>          - $\textbf{c}^T \textbf{x} = \textbf{c} \cdot \textbf{x}\rarr$ Scalar
->>          - $\textbf{c} \textbf{x}^T = \textbf{c} \times \textbf{x} \rarr$ Rank-1 Matrix (nxn)
+>>          - $\textbf{c}^T \textbf{x} = \textbf{c} \cdot \textbf{x}\rightarrow$ Scalar
+>>          - $\textbf{c} \textbf{x}^T = \textbf{c} \times \textbf{x} \rightarrow$ Rank-1 Matrix (nxn)
 >>
 >> 2. Quadratic Form
 >>      - $Q \in \mathbb{S}^n, \textbf{x} \in \mathbb{R}^n$
->>          - $\textbf{x}^T Q \textbf{x} \rarr$ Scalar
->>          - $\textbf{x}^T Q \textbf{x} \rarr \textbf{x}$의 Quadratic Form(2차함수)
->>          - $f(x)=\textbf{x}^T Q \textbf{x} \rarr ax^2 \rarr$ 아래로 볼록(Convex Function)
+>>          - $\textbf{x}^T Q \textbf{x} \rightarrow$ Scalar
+>>          - $\textbf{x}^T Q \textbf{x} \rightarrow \textbf{x}$ 의 Quadratic Form(2차함수)
+>>          - $f(x)=\textbf{x}^T Q \textbf{x} \rightarrow ax^2 \rightarrow$ 아래로 볼록(Convex Function)
 > 
 > ---
 > - ${AA^{-1} = A^{-1}A = I}$

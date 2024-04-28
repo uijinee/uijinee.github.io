@@ -1,12 +1,12 @@
 ---
-title: "3. Self Attention"
+title: "3. Attention"
 date: 2024-03-19 22:00:00 +0900
 categories: ["Artificial Intelligence", "Deep Learning(Basic)"]
 tags: ["vision", "nlp", "rnn", "self-attention", "transformer"]
 use_math: true
 ---
 
-# Self Attention
+# Attention
 
 ## 1. BackGround
 
@@ -186,9 +186,9 @@ _(Attention Layer는 총 2개의 Learnable Parameter를 갖는다.)_
 > 
 > 1. Attention Module을 Image에도 적용시켜보고자 함<br>
 >  ⅰ) 방법1: CNN Architecture사이에 Self-Attention Layer를 넣는다<br>　$\rightarrow$ 그래도 CNN인건 변하지 않는다.<br>
->  ⅱ) 방법2: Pixel의 관계를 계산할 때 Convolution대신 Self-Attention을 넣는다<br>　$\rightarrow$ 구현이 힘들고 성능도 별로<br>
->  ⅲ) 방법3: image를 Resize $\rightarrow$ flatten 하고 이 Image에 대해 Self-Attention을 한다<br>　$\rightarrow$ resize결과가 $R \times R$일경우 Self Attention에서 $R^2 \times R^2$ 의 메모리가 필요하다.<br>
-> **ⅳ) 방법4:** Image를 Patch별로 나눈 후 linear projection하고 이것들에 대해 Self-Attention을 한다<br> 　$\rightarrow$ **Vision Transformer**
+>  ⅱ) 방법2: Pixel의 관계를 계산할 때 Convolution대신 Self-Attention을 넣는다<br>　$\rightarrow$ 구현이 힘들고 성능도 별로...<br>
+>  ⅲ) 방법3: image를 Resize $\rightarrow$ flatten 하고 각 Pixel에 대해 Self-Attention을 한다<br>　$\rightarrow$ resize결과가 $R \times R$일경우 Self Attention에서 $R^2 \times R^2$ 의 메모리가 필요하다.<br>
+> **ⅳ) 방법4:** Image를 Patch별로 나눈 후 linear projection하고 이 Vector들 끼리 Self-Attention을 한다<br> 　$\rightarrow$ **Vision Transformer**
 > 
 > ---
 > #### 동작과정
@@ -202,13 +202,50 @@ _(Attention Layer는 총 2개의 Learnable Parameter를 갖는다.)_
 
 > #### Purpose 
 >
-> 1. ViT는 CNN에 비해 Inductive Bias가 적다<br>　$\rightarrow$즉, 학습을 위해서 매우 많은 데이터가 필요하다.
->
-> 2. CNN은 깊어질수록 Resolution은 감소하고 Channel은 증가하는 Hierarchical구조를 갖는다.<br>　$\rightarrow$ 반면에 ViT는 모든 Block이 같은 Resolution을 갖는 Isotropic Architecture를 갖는다.
+> ![alt text](/assets/img/post/deeplearning_basic/vit_pros_cons.png)
 > 
+> 1. ViT는 CNN에 비해 Inductive Bias가 적어 학습을 위해서 매우 많은 데이터가 필요하다.<br> 
+> $\rightarrow$ Hierarchical한 구조로 바꿈
+>
+> 2. ViT는 Isotropic한 Architecture이고, Self-Attention특성상 계산복잡도는 이미지의 $(Resolution)^2$에 비례한다.<br>
+>  즉, 고해상도 이미지를 처리하는데 적합하지 않다.<br>
+> $\rightarrow$ Window Attention
+> 　 
+>
+> - &#8251; **Inductive Bias**<br>
+>     - CNN은 Hierarchical한 구조로 Self-Attention보다 Local한 정보를 처리하는데 적합하다. _(Self-Attention은 Global Context를 처리하는데 이점이 있다.)_
+>     - 즉, Self-Attention은 조금 더 높은 자유도를 갖고있어 Big Data Set을 처리하는데 유리하지만, Small Data Set으로는 학습에 한계가 있다.
+>
+> ---
+> #### Hierarchical Architecture
+>
+> | ViT | Swin Transformer |
+> |: --- :| --- |
+> ![alt text](/assets/img/post/deeplearning_basic/vit_isotropic.png) | ![alt text](/assets/img/post/deeplearning_basic/swin_hierarchical.png)
+> | 입력 크기<br> $=$ <br>출력 크기 | 매 Swin Transformer Block을 지날때마다<br> Resolution은 줄어들고 Channel은 깊어진다.<br>　　- Resolution: Concatenate로 줄임<br>　　- Channel: $1 \times 1$ Convolution으로 너무 깊지 않게 유지함 |
+>
+> ---
+> #### Shifted Window Attention
+>
+> 위의 Hierarchical Architecture로 인해 뒷부분의 계산복잡도도 개선되긴 하였지만, 여전히 앞부분의 계산복잡도는 매우 높다.
+>
+> 이를 개선하기 위해 Shifted Window Attention이 도입된다.
+>
+> | Block L | Block L+1 |
+> | --- | --- |
+> | ![alt text](/assets/img/post/deeplearning_basic/shifted_window(1).png) | ![alt text](/assets/img/post/deeplearning_basic/shifted_window(2).png) |
+> | 1. 기존 Block의 Token Size<br>　$\rightarrow (HW)^2$<br> 2. Window를 적용할 경우 Token Size<br>　$\rightarrow M^2HW$<br>　　_($=M^4 \times (\frac{H}{M}) \times (\frac{W}{M})$)_ | 1. Block L만 사용할 경우<br>　$\rightarrow$ 서로 다른 Window간 정보교환 X<br>2. Block L+1과 교차하여 사용할 경우<br>　$\rightarrow$ 서로 다른 Window간 정보교환 가능 |
+>
+> &#8251; **Relative Position**<br>
+> 또한 이 Window Attention기법 덕분에 Vit에서 사용하는 Positional Encoding을 사용하지 않아도 된다.
+>
+> $Attention(Q, K, V) = SoftMax(\frac{QK^T}{\sqrt{D}}+ bias)V$
+> 
+> 대신 Self-Attention을 계산하는 식에서 자신이 속한 Patch에 대해 Patch간의 상대적인 위치인 Relative Position을 입력해준다.
 
 ### 4) MLP Mixer
 
+![alt text](/assets/img/post/deeplearning_basic/mlp_mixer.png)
 
 <!--
 ### 1) Idea
