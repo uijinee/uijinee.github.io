@@ -188,7 +188,7 @@ use_math: true
 > 
 > | 2. General Composition | 3. Vector Composition | 
 > | --- | --- |
-> | **ⅰ. Exp**<br> $\quad g$가 Convex이면 $e^{g(x)}$도 Convex이다.<br>**ⅱ. Constant Over Convex**<br> $\quad g$가 Concave이고 Positive면 $\frac{1}{g(x)}$는 Convex이다 | **ⅰ. Sum-Log**<br> $\quad g_i$가 Concave고 Positive면 $\sum \limits_{i=1}^n log(g_i(x))$는 Concave다.<br> **ⅱ. Log-Sum-Exp**<br> $\quad g_i$가 Convex이면 $\sum \limits_{i=1}^n e^{g_i(x)}$도 Convex이다. |
+> | **ⅰ. Exp**<br> $\quad g$가 Convex이면 $e^{g(x)}$도 Convex이다.<br>**ⅱ. Constant Over Convex**<br> $\quad g$가 Concave이고 Positive면 $\frac{1}{g(x)}$는 Convex이다 | **ⅰ. Sum-Log**<br> $\quad g_i$가 Concave고 Positive면 $\sum \limits_{i=1}^n log(g_i(x))$는 Concave다.<br> **ⅱ. Log-Sum-Exp**<br> $\quad g_i$가 Convex이면 $log(\sum \limits_{i=1}^n e^{g_i(x)})$도 Convex이다. |
 >
 > 
 > <br><br>
