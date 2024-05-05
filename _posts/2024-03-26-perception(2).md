@@ -171,6 +171,16 @@ use_math: true
 ### 3) SLAM
 
 > 지도생성과 측위를 동시에 하는 기술
+>
+> 자율주행에서는 Cm단위의 위치인식 기술이 필요하다.<br>
+> 이를 위해 기존의 센서데이터와 Odometry 정보를 합쳐 SLAM을 수행한다.<br>
+> 마지막으로 이를 최적화하여 정밀지도를 제작한다.
+> 
+> | | LiDAR SLAM | Camera SLAM |
+> | --- | --- | --- |
+> | 방법 | Scan Matching(=Map Matching)<br>정밀지도 정보 + LiDAR Scan데이터를 실시간 비교 | Tracking + Local Mapping + Loop Closing |
+> | 종류 | ⅰ. ICP 방식(Iterative Closest Point)<br>$\quad$ Point Cloud점들을 그대로 매칭에 활용<br>$\quad \rightarrow$ Rotational Error가 적음<br> ⅱ. NDT 방식(Normal Distribution Transform)<br>$\quad \rightarrow$ Initial Pose를 찾는데 빠름 | ⅰ. Feature Based 방식(ex. ORB SLAM)<br>$\quad$ Feauter들과 Map Point와의 Mathcing을 통한 Localization <br>$\quad \rightarrow$ 장점: 복잡함, 특징정보가 없는 지역에서 성능 하락<br> ⅱ. Direct 방식 (ex. LSD SLAM)<br>$\quad$ 간단한 특징 영역의 Filtering 및 pixel정보 사용 <br>$\quad \rightarrow$ 장점: 간단함 |
+> 
 
 ---
 
