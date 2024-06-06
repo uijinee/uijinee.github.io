@@ -1,8 +1,8 @@
 ---
 title: "3. Adversarial Search"
 date: 2024-04-02 22:00:00 +0900
-categories: ["Artificial Intelligence", "Machine Learning"]
-tags: ["deeplearning", "machine learning", "adversarial search"]
+categories: ["Artificial Intelligence", "AI"]
+tags: ["ai", "adversarial search"]
 use_math: true
 ---
 

@@ -1,8 +1,8 @@
 ---
 title: "6. First-Order Logic"
 date: 2024-04-05 22:00:00 +0900
-categories: ["Artificial Intelligence", "Machine Learning"]
-tags: ["deeplearning", "machine learning", "fl", "firstorder logic"]
+categories: ["Artificial Intelligence", "AI"]
+tags: ["ai", "fl", "firstorder logic"]
 use_math: true
 ---
 

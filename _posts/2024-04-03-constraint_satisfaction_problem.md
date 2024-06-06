@@ -1,8 +1,8 @@
 ---
 title: "4. CSP"
 date: 2024-04-03 22:00:00 +0900
-categories: ["Artificial Intelligence", "Machine Learning"]
-tags: ["deeplearning", "machine learning", "csp", "constraint satisfaction"]
+categories: ["Artificial Intelligence", "AI"]
+tags: ["ai", "csp", "constraint satisfaction"]
 use_math: true
 ---
 
