@@ -1,5 +1,5 @@
 ---
-title: "8. Generative Model"
+title: "9. Generative Model"
 date: 2024-05-20 22:00:00 +0900
 categories: ["Artificial Intelligence", "Deep Learning(Basic)"]
 tags: ["vae", "gan"]

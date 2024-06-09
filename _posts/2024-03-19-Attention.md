@@ -1,5 +1,5 @@
 ---
-title: "3. Attention"
+title: "4. Attention"
 date: 2024-03-19 22:00:00 +0900
 categories: ["Artificial Intelligence", "Deep Learning(Basic)"]
 tags: ["vision", "nlp", "rnn", "self-attention", "transformer"]
