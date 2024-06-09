@@ -25,6 +25,8 @@ use_math: true
 > ---
 > **Encoder & Decoder**
 >
+> 기존의 LSTM이나 RNN으로는 입력과 출력의 길이가 같은 문장밖에 처리할 수 없다.
+> 
 > ![alt text](/assets/img/post/deeplearning_basic/encoder_decoder.png)
 >
 > 입출력 문장의 길이가 다를때 활용할 수 있는 대표적인 방법은 Encoder와 Decoder를 사용하는 것이다.
@@ -142,10 +144,10 @@ use_math: true
 | | Attention Layer | Show, Attend and tell |
 |:---:| --- | --- |
 | | ![alt text](/assets/img/post/deeplearning_basic/attention_layer.png) | ![alt text](/assets/img/post/deeplearning_basic/show_attend_tell_procedure(3).png) |
-| Query<br>_(알고싶은 대상)_ | $Query$ | $s_0$ |
-| Key<br>_(비교할 대상)_| $Key$<br>_(InputVector $X$에 MLP를 적용해 생성)_ | {$h_{i, j}$} |
-| Context Vector<br>생성 도구 | $Value$<br>_(InputVector $X$에 MLP를 적용해 생성)_  | {$h_{i, j}$} |
-| Output<br>_(Context Vector)_ | $Y=AV$<br>_(Weighted Sum)_ | $C=AH$<br>_(Weighted Sum)_ |
+| Query<br>_(알고싶은 대상)_ | $Query = \mathbf{W}_q \mathbf{x}$ | $s_0$ |
+| Key<br>_(비교할 대상)_| $$Key = \mathbf{W}_k \mathbf{x}$$<br>_(InputVector $X$에 MLP를 적용해 생성)_ | {$h_{i, j}$} |
+| Context Vector<br>생성 도구 | $$Value = \mathbf{W}_v \mathbf{x}$$<br>_(InputVector $X$에 MLP를 적용해 생성)_  | {$h_{i, j}$} |
+| Output<br>_(Context Vector)_ | $Y=AV = \text{softmax}(\frac{\mathbf{QK^T}}{\sqrt{d}})\mathbf{V}$<br>_(Weighted Sum)_ | $C=AH$<br>_(Weighted Sum)_ |
 | Similarity함수 | Scaled Dot-Product<br>$E=\frac{QK^T}{\sqrt{D_Q}}$<br>_(Q, K의 길이가 클수록 Softmax에 의해<br> 0에 가까운 Gradient가 많이 발생한다.)<br> (Gradient Vanishing현상)_ | - Dot-Product Attention($E=QK^T$)<br> - Bilinear Attention<br> - Multi-Layer Perceptron Attetion |
 
 _(Attention Layer는 총 2개의 Learnable Parameter를 갖는다.)_
@@ -167,7 +169,7 @@ _(Attention Layer는 총 2개의 Learnable Parameter를 갖는다.)_
 > | --- | --- | --- |
 > | **Self Attention** | ![alt text](/assets/img/post/deeplearning_basic/self_attention_layer.png) | 1. Query를 별도로 입력해주는 것이 아닌<br>　InputVector$X$로부터 MLP를 적용해 생성한다.<br> 　$\Rightarrow$ 3개의 Learnable Layer<br><br>2. 벡터들의 집합으로서 동작한다.<br>　$if (X_1, X_2, X_3 \rightarrow X_3, X_1, X_2)$<br>　$\Rightarrow (Y_1, Y_2, Y_3 \rightarrow Y_3, Y_1, Y_2)$<br>　$\therefore$ InputVector의 순서정보를 알지 못한다.<br>　$\Rightarrow$ Positional Encoding이 필요하다.<br>　　![alt text](/assets/img/post/deeplearning_basic/positional_embeding.png) (concat)  |
 > | **Masked**<br> **Self Attention** | ![alt text](/assets/img/post/deeplearning_basic/masked_self_attention.png) | 기존의 Encoder Decoder 구조의 모델들은<br> 입력값을 순차적으로 전달받아 $t+1$시점의<br> 예측을 위해 $t$까지의 데이터만 쓸 수 있었다.<br><br> 하지만 Transformer는 한번에 모든 입력을<br>받기 때문에 과거 시점의 입력을 예측할 때<br> 미래시점의 입력도 참고할 수 있다. <br><br> 이를 방지하기 위해 사용하는 것이<br> **<u>Look a Head Mask</u>**이다. |
-> | **Multi-Head**<br> **Self Attention** | ![alt text](/assets/img/post/deeplearning_basic/multi-head_self_attention.png) | n개의 **Self Attention Layer**를<br> **<u>Parallel</u>**하게 동작하도록 구성한 Layer이다. |
+> | **Multi-Head**<br> **Self Attention** | ![alt text](/assets/img/post/deeplearning_basic/multi-head_self_attention.png) | n개의 **Self Attention Layer**를<br> **<u>Parallel</u>**하게 동작하도록 구성한 Layer이다.<br><br> 이를 통해 여러 관점에서 정보를 바라볼 수 있게 한다. |
 >
 > ---
 > #### Transformer
@@ -175,7 +177,7 @@ _(Attention Layer는 총 2개의 Learnable Parameter를 갖는다.)_
 > | | Transformer Block | Transformer Architecture |
 > | --- | --- | --- |
 > | 그림 | ![alt text](/assets/img/post/deeplearning_basic/transformer_block.png) | ![alt text](/assets/img/post/deeplearning_basic/transformer_architecture.png)  |
-> | 특징 | - **Layer Normalization**<br> | - Encoder Decoder Design<br>- Sequence of Transformer Block|
+> | 특징 | - **Layer Normalization**<br> | - Encoder Decoder Design<br>- Sequence of Transformer Block<br>- **Positional Embedding**<br> _(CNN과 RNN과는 달리 Transformer는<br> 순서정보를 활용하지 않는다.<br> 이를 위해 Positional Embedding을 사용한다.)_ |
 > 
 
 ### 2) VIT(Vision Transformer)
