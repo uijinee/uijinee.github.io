@@ -10,6 +10,8 @@ use_math: true
 
 ## 1. 구조
 
+![alt text](/assets/img/post/deeplearning_basic/feedfoward_structure.png)
+
 ---
 ## 2. Train 
 
@@ -93,4 +95,4 @@ $\text{arg} \min \limits_\mathbf{W}(\sum \limits_{(x, y)}L(\mathbf{y}, h_\mathbf
 >
 > - 매 학습마다 다른 구조의 모델이 학습되는데 때문에 Ensemble(Bagging)의 효과를 얻을 수 있다는 해석도 존재
 >
-> &#8352; Drop Connect: Node가 아닌 Weight를 Drop하는 방법
+> &#8251; Drop Connect: Node가 아닌 Weight를 Drop하는 방법
