@@ -158,3 +158,16 @@ Newton's Method는 위의 두가지 관점으로 해석할 수 있다.
 ## 2. Constrained Minimization
 
 핵심: Unconstrained로 바꾸기
+
+### 1) Equality Constrained Optimization
+
+$$
+\text{Minimize: } \quad f(\mathbf{x}) \\
+\text{Subject to}: \quad A\mathbf{x} = \mathbf{b}
+$$
+
+$A \in \mathbb{R}^{p \times n},$<br>
+$Rank(A) = p$<br>
+$\mathbf{x} \in \mathbb{R}^n,$<br>
+$f(\mathbf{x}) \text{는 Convex},$<br> 
+$f(\mathbf{x}) \text{는 두번 미분 가능}$
