@@ -229,4 +229,37 @@ Newton's Method는 위의 두가지 관점으로 해석할 수 있다.
 
 ### 2) Inequality Constrained Optimization
 
-Inequality로 바꾸기
+Irritation(Indicator) Function을 사용해서 Inequality로 바꾸자!
+
+| Original Problem | Approximated Problem |
+| --- | --- |
+| ![alt text](/assets/img/post/convex_optimization/irritation.png) | ![alt text](/assets/img/post/convex_optimization/logarithmic_barrier.png) |
+| $$\text{Minimize: } \quad f_0(\mathbf{x}) \\ \text{Subject to: } \quad f_i(\mathbf{x}) \leq 0 \\ \qquad\qquad \qquad A\mathbf{x} = \mathbf{b}$$ $\qquad \qquad \Downarrow$<br> $$\text{Minimize: } \quad f_0(\mathbf{x}) + \sum \limits_{i=1}^m I_-(f_i(\mathbf{x})) \\ \text{Subject to: } \quad A\mathbf{x} = \mathbf{b}$$ | $$\text{Minimize: } \quad f_0(\mathbf{x}) - \frac{1}{t} \sum \limits_{i=1}^m log(-f_i(\mathbf{x})) \\ \text{Subject to: } \quad A\mathbf{x} = \mathbf{b}$$<br> *($t>0$는 Hyperparameter, 클수록 $I_-(x)$와 같아짐)*<br>*(Log barrier function: $\phi (\mathbf{x}) = - \sum \limits_{i=1}^m log(-f_i(\mathbf{x}))$)* | 
+
+$\nabla \phi(\mathbf{x}) = \sum \limits_{i=1}^m \frac{1}{-f_i(\mathbf{x})} \nabla f_i(\mathbf{x})$<br>
+$\nabla^2 \phi(\mathbf{x}) = \sum \limits_{i=1}^m \frac{1}{-f_i(\mathbf{x})^2} \nabla f_i(\mathbf{x}) \nabla f_i(\mathbf{x})^T + \sum \limits_{i=1}^m \frac{1}{-f_i(\mathbf{x})} \nabla^2 f_i(\mathbf{x})$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$$
+\text{Minimize: } \quad \sum \limits_{i=1}^n \mathbf{x}_i log \mathbf{x}_i \\
+\text{Subject to: } \quad F\mathbf{x} \preceq g \\
+\qquad\qquad \qquad A\mathbf{x} = \mathbf{b}
+$$
