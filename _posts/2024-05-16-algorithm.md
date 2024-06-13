@@ -161,14 +161,58 @@ Newton's Method는 위의 두가지 관점으로 해석할 수 있다.
 
 ### 1) Equality Constrained Optimization
 
-$$
-\text{Minimize: } \quad f(\mathbf{x}) \\
-\text{Subject to}: \quad A\mathbf{x} = \mathbf{b}
-$$
+| Problem | KKT Condition |
+| --- | --- |
+| $$ \text{Minimize: } \quad f(\mathbf{x}) \\ \text{Subject to}: \quad A\mathbf{x} = \mathbf{b} $$<br><br>  $A \in \mathbb{R}^{p \times n},$<br> $Rank(A) = p$<br> $\mathbf{x} \in \mathbb{R}^n,$<br> $f(\mathbf{x}) \text{는 Convex},$<br> $f(\mathbf{x}) \text{는 두번 미분 가능}$ | $$ \text{Primal Feasible: } \; \qquad A\mathbf{x}^* = \mathbf{b}$$<br> $$\text{Gradient of Lagrangian: } \quad \nabla f(\mathbf{x}^*) + A^T\nu^* = 0 $$<br><br><br> &#8251; Dual Residual: $r_d(\mathbf{X}, \nu) = \nabla f(\mathbf{x}) + A^T\nu$<br> &#8251; Primal Residual: $r_p(\mathbf{x}, \nu) = A\mathbf{x} - \mathbf{b}$  |
 
-$A \in \mathbb{R}^{p \times n},$<br>
-$Rank(A) = p$<br>
-$\mathbf{x} \in \mathbb{R}^n,$<br>
-$f(\mathbf{x}) \text{는 Convex},$<br> 
-$f(\mathbf{x}) \text{는 두번 미분 가능}$
+&#8251; Equality Constrained Quadratic Minimization일 경우 주의할 점이 필요하므로 이를 살펴보자.
+
+| Problem | KKT Matrix |
+| --- | --- |
+| $$\text{Minimize: } \quad \frac{1}{2} \mathbf{x}^{*T}P\mathbf{x}^* + q^T\mathbf{x}^* + r$$<br> $$\text{Subject to}: \; A\mathbf{x} = \mathbf{b}$$<br><br>-----------------------------------------------------<br>**KKT Condition**<br> $$P\mathbf{x}^* + q + A^T \nu = 0$$ <br>$$A\mathbf{x}^* = \mathbf{b}$$<br> $$\qquad \Downarrow$$<br> $$\begin{bmatrix} P & A^T \\ A & 0 \end{bmatrix} \begin{bmatrix} \mathbf{x}^* \\ \mathbf{\nu}^* \end{bmatrix} = \begin{bmatrix} -q \\ \mathbf{b} \end{bmatrix}$$| $$K = \begin{bmatrix} P & A^T \\ A & 0 \end{bmatrix}$$<br> 이때, Convex Optimization문제로 가정하면<br> KKT Conditinon은 유일해를 가져야 한다.<br> 즉, KKT Matrix는 Non-Singular Matrix여야 한다.<br>$\Rightarrow \mathcal{N}(P) \cap \mathcal{N}(A) = \begin{Bmatrix} 0\end{Bmatrix}$<br>$\Rightarrow \mathbf{x}^TP\mathbf{x} + \Vert A\mathbf{x} \Vert^2 > 0$<br>$\Rightarrow P + A^TA \succ 0$<br> $\Rightarrow P \succ 0$<br>즉, $P \succ 0$일 경우 Unique한 Solution을 구할 수 있다. |
+
+> #### Eliminating Equality Constraint
+>
+> KKT Condition으로도 문제를 풀 수는 있다.<br>
+> 
+> 하지만 앞서 배운 Unconstrained Optimization에서 사용하는 알고리즘들(Gradient Descent, Newton's Method)를 사용하기 위해서는 Constraint를 없애줄 필요가 있다.
+>
+> | | $\mathbf{x} = \mathbf{x}_h + \mathbf{x}_p$ |
+> | --- | --- |
+> | ![alt text](/assets/img/post/convex_optimization/nonhomogeneous_solution.png) | Nonhomogeneous System에서 배웠듯이 $A\mathbf{x} = \mathbf{b}$의 해는<br> Homogeneous Solution($A\mathbf{x} = 0$)과<br> Particular Solution($A\mathbf{x} = \mathbf{b}$)으로 나눌 수 있다. |
+>
+> 
+> 
+> 이를 이용하여 Constraint가 존재하는 $\mathbf{x}$는 Constraint가 존재하지 않는 $\mathbf{z}$에 대한 식으로 바꿀 수 있다.
+>
+> | $$ \qquad \begin{Bmatrix} \mathbf{x} \vert A \mathbf{x} = b \end{Bmatrix} \rightarrow \begin{Bmatrix} F\mathbf{z} + \hat{\mathbf{x}} \vert \mathbf{z} \in \mathbb{R}^{n-p} \end{Bmatrix} \\ \, \\F \in \mathbb{R}^{n \times (n-p)} \\ AF = 0, \quad (\mathcal{N}(A) = F)\\ A\mathbf{\hat{x}} = \mathbf{b} \qquad \qquad \qquad \quad$$ | $$\Rightarrow \qquad \underset{z}{\text{Minimize}} \quad f(F\mathbf{z} + \hat{x}) \qquad \qquad $$ |
+>
+> 즉 이 Unconstrained Minimization Problem의 해 $\mathbf{z}^\*$를 구하고<br>
+> $\mathbf{x}^\* = F\mathbf{z}^\* + \hat{\mathbf{x}}, \quad \nabla f(\mathbf{x}^*) + A^T \nu^\* = 0$를 통해 원래의 해($\mathbf{x}^\*, \nu^\*$)를 알 수 있다.
+>
+> ---
+> #### Projected Gradient Method
+>
+> ![alt text](/assets/img/post/convex_optimization/projected_gradient_method.png)
+>
+> 다음 3개의 문제를 살펴보자.
+>
+> | Problem1 | Problem2 | Problem3 |
+> | --- | --- | --- |
+> | $$ \underset{\mathbf{x}}{\text{Minimize}} \quad f(\mathbf{x}) \\ \text{Subject to} \quad A\mathbf{x} = \mathbf{b} $$ | $$\underset{z}{\text{Minimize}} \quad f(F\mathbf{z} + \hat{x})$$ | $$\underset{\mathbf{y}}{\text{Minimize}} \quad \Vert F\mathbf{y} - (-g) \Vert_2$$ |
+> | --- | $$\mathbf{z}^* = F^T \cdot \nabla_\mathbf{x} f(F\mathbf{z} + \hat{\mathbf{x}}) \\ \vartriangle\mathbf{z} = -\mathbf{z}^*$$ | $$\mathbf{y}^* = -F^Tg$$<br>_(if $F$ is Orthonormal basis)_ |
+>
+> 우선 1번과 2번이 같은 문제임은 앞에서 증명하였다.
+>
+> 이때, 3번에서 $g= \nabla_\mathbf{z} f(F\mathbf{z} + \hat{\mathbf{x}})$라고 설정하면 2번문제의 Gradient Descent의 Step이 3번 문제의 Optimal인 점과 동일하다는 것을 알 수 있다.
+>
+> 즉, $g = \nabla_\mathbf{x} f$를 $F$가 Span하는 공간 위로 Projection시킨 벡터가 해임을 알 수 있다.
+>
+> 이를 통해 알 수 있는 것은 Equality Constrained일 경우,<br>
+> Unconstrained일때의 Gradient Descent의 Step은 Equality Constrained일 때<br>
+> $A$의 Null Space(즉, Homogeneous해) 평면 위로<br>
+> Projection되어 진행한다는 것이다.
+> 
+
+### 2) Inequality Constrained Optimization
 
