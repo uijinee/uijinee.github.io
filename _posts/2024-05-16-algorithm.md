@@ -157,8 +157,6 @@ Newton's Method는 위의 두가지 관점으로 해석할 수 있다.
 ---
 ## 2. Constrained Minimization
 
-핵심: Unconstrained로 바꾸기
-
 ### 1) Equality Constrained Optimization
 
 | Problem | KKT Condition |
@@ -169,7 +167,7 @@ Newton's Method는 위의 두가지 관점으로 해석할 수 있다.
 
 | Problem | KKT Matrix |
 | --- | --- |
-| $$\text{Minimize: } \quad \frac{1}{2} \mathbf{x}^{*T}P\mathbf{x}^* + q^T\mathbf{x}^* + r$$<br> $$\text{Subject to}: \; A\mathbf{x} = \mathbf{b}$$<br><br>-----------------------------------------------------<br>**KKT Condition**<br> $$P\mathbf{x}^* + q + A^T \nu = 0$$ <br>$$A\mathbf{x}^* = \mathbf{b}$$<br> $$\qquad \Downarrow$$<br> $$\begin{bmatrix} P & A^T \\ A & 0 \end{bmatrix} \begin{bmatrix} \mathbf{x}^* \\ \mathbf{\nu}^* \end{bmatrix} = \begin{bmatrix} -q \\ \mathbf{b} \end{bmatrix}$$| $$K = \begin{bmatrix} P & A^T \\ A & 0 \end{bmatrix}$$<br> 이때, Convex Optimization문제로 가정하면<br> KKT Conditinon은 유일해를 가져야 한다.<br> 즉, KKT Matrix는 Non-Singular Matrix여야 한다.<br>$\Rightarrow \mathcal{N}(P) \cap \mathcal{N}(A) = \begin{Bmatrix} 0\end{Bmatrix}$<br>$\Rightarrow \mathbf{x}^TP\mathbf{x} + \Vert A\mathbf{x} \Vert^2 > 0$<br>$\Rightarrow P + A^TA \succ 0$<br> $\Rightarrow P \succ 0$<br>즉, $P \succ 0$일 경우 Unique한 Solution을 구할 수 있다. |
+| $$\text{Minimize: } \quad \frac{1}{2} \mathbf{x}^{*T}P\mathbf{x}^* + q^T\mathbf{x}^* + r$$<br> $$\text{Subject to}: \; A\mathbf{x} = \mathbf{b}$$<br><br>-----------------------------------------------------<br>**KKT Condition**<br> $$P\mathbf{x}^* + q + A^T \nu = 0$$ <br>$$A\mathbf{x}^* = \mathbf{b}$$<br> $$\qquad \Downarrow$$<br> $$\begin{bmatrix} P & A^T \\ A & 0 \end{bmatrix} \begin{bmatrix} \mathbf{x}^* \\ \mathbf{\nu}^* \end{bmatrix} = \begin{bmatrix} -q \\ \mathbf{b} \end{bmatrix}$$| $$K = \begin{bmatrix} P & A^T \\ A & 0 \end{bmatrix}$$<br> 이때 문제를 풀기위해 KKT Matrix가<br> Non-Singular Matrix(역함수 존재)임을 가정하자.<br>$\Rightarrow \mathcal{N}(P) \cap \mathcal{N}(A) = \begin{Bmatrix} 0\end{Bmatrix}$<br>$\Rightarrow \mathbf{x}^TP\mathbf{x} + \Vert A\mathbf{x} \Vert^2 > 0 \quad \because$(P:정방행렬, A:비정방행렬)<br>$\Rightarrow P + A^TA \succ 0$<br>즉, 위 식이 성립하면 Unique한 Solution을 구할 수 있다.<br> _(또 만약 $P \succ 0$일 경우에도 마찬가지이다.)_ |
 
 > #### Eliminating Equality Constraint
 >
@@ -180,8 +178,6 @@ Newton's Method는 위의 두가지 관점으로 해석할 수 있다.
 > | | $\mathbf{x} = \mathbf{x}_h + \mathbf{x}_p$ |
 > | --- | --- |
 > | ![alt text](/assets/img/post/convex_optimization/nonhomogeneous_solution.png) | Nonhomogeneous System에서 배웠듯이 $A\mathbf{x} = \mathbf{b}$의 해는<br> Homogeneous Solution($A\mathbf{x} = 0$)과<br> Particular Solution($A\mathbf{x} = \mathbf{b}$)으로 나눌 수 있다. |
->
-> 
 > 
 > 이를 이용하여 Constraint가 존재하는 $\mathbf{x}$는 Constraint가 존재하지 않는 $\mathbf{z}$에 대한 식으로 바꿀 수 있다.
 >
@@ -213,6 +209,24 @@ Newton's Method는 위의 두가지 관점으로 해석할 수 있다.
 > $A$의 Null Space(즉, Homogeneous해) 평면 위로<br>
 > Projection되어 진행한다는 것이다.
 > 
+> ---
+> #### Newton Step
+>
+> Newton Step은 현재 위치에서 2차근사를 활용해 최솟값을 찾는 방식이다.<br>
+> 즉, 다음의 문제를 풀면된다.
+> 
+> | Problem | KKT Condition |
+> | --- | --- |
+> | $$\underset{\mathbf{\nu}}{\text{Minimize:}}\; \hat{f}(\mathbf{x} + \mathbf{\nu}) = f(\mathbf{x}) + \nabla_\mathbf{x} f(\mathbf{x})^T \nu + \frac{1}{2} \nu^T \nabla^2_\mathbf{x} f(\mathbf{x}) \nu \\ \text{Subject to: }\quad A(\mathbf{x} + \nu) = \mathbf{b}$$| **ⅰ. Primal Feasible**<br> $$A(\mathbf{x} + \nu) = \mathbf{b}$$ <br>**ⅳ. Gradient of Lagrangian**<br>$$\nabla_\nu (\hat{f}(\mathbf{x} + \mathbf{\nu}) + A(\mathbf{x} + \nu) - \mathbf{b}) \\ = \nabla_\mathbf{x} f(\mathbf{x}) + \nabla^2_\mathbf{x}f(\mathbf{x}) \nu + A^Tw = 0$$ |
+> 
+> 즉 다음의 Linear Equation의 Solution이다.
+>
+> $$
+> \begin{bmatrix} \nabla^2_\mathbf{x} f(\mathbf{x}) & A^T \\ A & 0\end{bmatrix} \begin{bmatrix} \nu \\ W \end{bmatrix} = \begin{bmatrix} -\nabla_\mathbf{x} f(\mathbf{x}) \\ 0 \end{bmatrix}   
+> $$
+>
+> &#8251; Newton Decrement: $$\lambda(\mathbf{x}) = (\vartriangle \mathbf{x}^T_{nt} \nabla^2 f(\mathbf{x}) \vartriangle \mathbf{x}_{nt})^\frac{1}{2} = (-\nabla f(\mathbf{x})^T \vartriangle \mathbf{x}_{nt})^\frac{1}{2}$$
 
 ### 2) Inequality Constrained Optimization
 
+Inequality로 바꾸기
