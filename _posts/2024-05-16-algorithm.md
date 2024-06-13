@@ -171,3 +171,4 @@ $Rank(A) = p$<br>
 $\mathbf{x} \in \mathbb{R}^n,$<br>
 $f(\mathbf{x}) \text{는 Convex},$<br> 
 $f(\mathbf{x}) \text{는 두번 미분 가능}$
+
