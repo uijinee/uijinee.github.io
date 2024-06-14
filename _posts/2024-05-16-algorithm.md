@@ -239,27 +239,51 @@ Irritation(Indicator) Function을 사용해서 Inequality로 바꾸자!
 $\nabla \phi(\mathbf{x}) = \sum \limits_{i=1}^m \frac{1}{-f_i(\mathbf{x})} \nabla f_i(\mathbf{x})$<br>
 $\nabla^2 \phi(\mathbf{x}) = \sum \limits_{i=1}^m \frac{1}{-f_i(\mathbf{x})^2} \nabla f_i(\mathbf{x}) \nabla f_i(\mathbf{x})^T + \sum \limits_{i=1}^m \frac{1}{-f_i(\mathbf{x})} \nabla^2 f_i(\mathbf{x})$
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-$$
-\text{Minimize: } \quad \sum \limits_{i=1}^n \mathbf{x}_i log \mathbf{x}_i \\
-\text{Subject to: } \quad F\mathbf{x} \preceq g \\
-\qquad\qquad \qquad A\mathbf{x} = \mathbf{b}
-$$
+> #### Central Path
+>
+> | Approximated Problem에서 t를 곱하고<br> 이 식의 t에 따른 Solution의 경로$\mathbf{x}^\*(t)$를<br> Central Path라고 한다.<br><br> $\text{Minimize:} \quad tf_0(\mathbf{x}) + \phi(\mathbf{x})$<br>$\text{subject to:}\quad A\mathbf{x} = \mathbf{b}$<br> | ![alt text](/assets/img/post/convex_optimization/central_path.png)<br> ex) $f_0(\mathbf{x}) = c^T\mathbf{x}$<br>$\quad f_i(\mathbf{x}) = a_i^T \leq b_i$ |
+> 
+> $$
+> \Downarrow
+> $$
+> 
+> $\text{KKT Condition(ⅰ): } A\mathbf{x} = \mathbf{b}$<br>
+> $\text{KKT Condition(ⅳ): } t \nabla f_0(\mathbf{x}) + \sum \limits_{i=1}^m \frac{1}{-f_i(\mathbf{x})} \nabla f_i(\mathbf{x}) + A^T \nu = 0$
+> 
+> $$
+> \Downarrow
+> $$
+> 
+> $$
+> f_0(\mathbf{x}^*(t) \geq p^* \geq g(\lambda^*(t), \nu^*(t))) \\
+> \qquad \qquad \qquad \qquad = L(\mathbf{x}^*(t), \lambda^*(t), \nu^*(t)) \\ 
+> \qquad \qquad \qquad \quad \qquad \qquad \qquad \quad = f_0(\mathbf{x}^*(t)) - \frac{m}{t} \quad (\text{m inequality #})
+> $$
+>
+> 즉, 이 t의 크기를 통해 Optimal Value와의 오차를 조절할 수 있다.<br>
+> 따라서, Stopping Criterion을 정하고 t를 점차 키워가면서 Optimal Value를 구하는 알고리즘을 사용할 수 있다.
+>
+> ---
+> #### Algorithm
+>
+> ```python
+> t = 10
+> mu = 10
+> tolerance = 1e-5
+>
+> while True:
+>   initial_x = x
+>   step = minimize(t*f0(x) + phi, subject_to= (lambda x: Ax=b))
+>   
+>   x = last_optimal
+>   if m / t < tolerance:
+>       break
+>   t = mu*t
+> ```
+> _(t마다 Initial_x의 값을 계속 변화시키면서 Optimal을 찾는다.)_<br>
+> _(전통적으로는 $\mu = 10 \sim 20$으로 설정한다.)_<br>
+> _($\mu$가 너무 클 경우 Step을 계산하는 시간이 너무 오래걸린다. 즉, Trade off가 있다.)_
+>
+> ![alt text](/assets/img/post/convex_optimization/centralpath_complexity.png)
+>
+> $$(\text{Central Path Complexity, via }\mu)$$
