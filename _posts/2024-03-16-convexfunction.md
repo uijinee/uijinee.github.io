@@ -99,12 +99,12 @@ use_math: true
 > | $f$가 Convex Function이면<br> $Epi(f)$도 Convex이다. | $f$가 Convex Function이면<br> $Sub(f)$는 Convex Set이다.|
 >
 > ---
-> #### Jenson's Inequality
+> #### Jensen's Inequality
 >
 > 이 Convex Function의 정의는 젠슨부등식에서도 엿볼 수 있다.
 >
 > $$
-> f(\mathbb{E}[z] \leq \mathbb{E}[f(z)])
+> f(\mathbb{E}[z]) \leq \mathbb{E}[f(z)]
 > $$ 
 >
 > - Convex의 정의로부터 쉽게 유추가능하다<br>
