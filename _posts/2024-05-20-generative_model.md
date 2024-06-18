@@ -1,5 +1,5 @@
 ---
-title: "2. Generative Model"
+title: "3. Generative Model"
 date: 2024-05-20 22:00:00 +0900
 categories: ["Artificial Intelligence", "Computer Vision"]
 tags: ["vae", "gan"]
