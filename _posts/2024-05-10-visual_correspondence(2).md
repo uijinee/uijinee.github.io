@@ -109,4 +109,4 @@ Stereo Matching은 1D Search Problem이었다면 Optical Flow는 2D Search Probl
 
 ### GMFlow
 
-![alt text](image.png)
+![alt text](/assets/img/post/computer_vision/gmflow.png)
