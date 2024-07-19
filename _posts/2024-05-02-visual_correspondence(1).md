@@ -1,12 +1,19 @@
 ---
-title: "1. Visual Correspondence"
+title: "1. Visual Correspondence(1)"
 date: 2024-05-02 22:00:00 +0900
 categories: ["Artificial Intelligence", "Computer Vision"]
 tags: ["visual correspondence", "vision"]
 use_math: true
 ---
 
-# Image Matching
+# Sparse Correspondence
+
+특정 점들을 통해 이미지간의 매칭을 수행하는 것<br>
+즉, 이 특징점들을 추출하여 Vector화할 때, 다음 두가지 Property를 구현하는 것이 중요하다.
+- Robustness: 비슷한 Feature들은 가까운 거리에 존재하는 것
+- Distinctiveness: 다른 Feature들은 먼 거리에 존재하는 것
+
+(Next: Dense Correspondence: flow예측과 같이 모든 점들을 활용해 Pixel간의 매칭을 수행하는 것)
 
 ## 1. Classical Method
 
@@ -77,7 +84,7 @@ Image Matching의 Classical한 Pipeline은 다음과 같다.
 ---
 ## 2. Deep Learning
 
-### 1) Matching(Metric Learning)
+### 1) Feature Descriptor(Metric Learning)
 
 Metric Learning에서는 Hinge Loss를 주로 사용하여 Matching여부의 결정경계를 찾는다.
 
@@ -107,7 +114,7 @@ $$
 > | --- | --- |
 > | ![alt text](/assets/img/post/computer_vision/deepdesc.png) | 별도의 Decision Network없이 Siamese Network에서 추출한<br> Descriptor Vector들의 L2-Norm을 출력<br><br> **Pairwise Hinge Loss**<br> $$l(\mathbf{x}_1, \mathbf{x}_2) = \begin{cases} \Vert D(\mathbf{x}_1) - D(\mathbf{x}_2) \Vert_2, \quad p_1 = p_2 \\ \text{max}(0, C-\Vert D(\mathbf{x}_1) - D(\mathbf{x}_2) \Vert_2), \quad p_1 \neq p_2\end{cases}$$ |
 > 
-> #### Hard Negative Mining
+> **Hard Negative Mining**
 > 
 > **Hard Negative**란 실제로는 Negative인데 Positive라고 잘못 예측하기 쉬운 데이터를 말한다. <br>
 > 반면에 **Easy Negative**란 실제로도 Negative이고 예측도 Negative라고 예측하기 쉬운 데이터를 말한다.<br>
@@ -117,13 +124,70 @@ $$
 > Hard Negative Mining은 이런 Sample들을 추출해 데이터셋에 포함시켜 학습하는 방법이다.
 > 
 > ---
-> #### [Paper3: Triplet Learning]
+> #### [Paper3: Triplet Learning](https://web.archive.org/web/20170610122316id_/http://www.iis.ee.ic.ac.uk:80/~vbalnt/shallow_descr/TFeat_paper.pdf)
 > 
 >![alt text](/assets/img/post/computer_vision/triplet_learning.png)
 > 
 
 ### 2) Orientations
 
-18분
+![alt text](/assets/img/post/computer_vision/orientationnetwork_architecture.png)
 
-> #### [Paper1: LIFT]()
+이 후에는 Orientation까지 Neural Network로 추측하는 모델도 등장하게 된다.<br>
+즉, 이 Network를 사용하여 End-To-End로 Feature Descriptor를 추출하는 모델을 완성할 수 있다.
+
+> #### [Paper1: LIFT](https://arxiv.org/pdf/1603.09114)
+>
+> _(아마 처음으로 End-To-End Feature Descriptor를 만든 논문인듯?)_
+>
+> | Pipeline | Quadruplet Siamese Netowrk |
+> | --- | --- |
+> | ![alt text](/assets/img/post/computer_vision/lift_pipeline.png) | ![alt text](/assets/img/post/computer_vision/lift_network.png)<br> _($\approx$ Triplet Network)_ |
+>
+> Test Time에는 Score Map을 추출하고 난 후, Score Pyramid를 만들고 NMS를 수행하는 과정을 통해 SIFT의 DoG와 비슷한 과정으로 구현하였다.
+>
+> ---
+> #### [Paper2: SuperPoint](https://arxiv.org/pdf/1712.07629)
+> 
+> ---
+> #### [Paper3: D2Net](https://arxiv.org/pdf/1905.03561)
+
+
+### 3) Matching
+
+Classical한 Matching 방법에는 다음이 있다.
+
+| NM | MNN |
+| --- | --- |
+| ![alt text](/assets/img/post/computer_vision/nm.png) | ![alt text](/assets/img/post/computer_vision/mnn.png) |
+| Matching하고자 하는 점에서<br> 가장 가까운 점을 찾는 것 | Matching의 주체와 대상이<br> 모두 가까운 경우에만 수행하는 것 | 
+
+> #### [Paper1: SuperGlue](https://arxiv.org/pdf/1911.11763)
+>
+> | Architecture |  |
+> | --- | --- |
+> | ![alt text](/assets/img/post/computer_vision/superglue.png) | ![alt text](/assets/img/post/computer_vision/superglue_architecture.png) |
+>
+> ---
+> #### [Paper2: LoFTR](https://arxiv.org/pdf/2104.00680)
+>
+> | Architecture | Abstract |
+> | --- | --- |
+> | ![alt text](/assets/img/post/computer_vision/loftr_architecture.png) | Transformer를 기반으로 Pixel-wise Dense Match를<br> 목표로 하는 모델 | 
+> 
+> | Procedure | |
+> |:---:| --- | 
+> | ![alt text](/assets/img/post/computer_vision/loftr_featureextract.png) | **ⅰ. Local Feature CNN**<br> $\quad$ ◆ CNN을 거쳐 이미지로부터 Low Level Feature를<br> $\quad\;\,$ 추출한다.<br> $\quad \; \, \rightarrow$($\frac{1}{8}H, \frac{1}{8}W$)의 크기<br> $\quad$ ◆ UNet구조와 비슷하게 Low Level Feature를<br> $\quad \;\,$ Upsampling하여 더 정교한 Feature를 추출한다.<br> $\quad \; \, \rightarrow$ ($\frac{1}{2}H, \frac{1}{2}W$)의 크기 |
+> | ![alt text](/assets/img/post/computer_vision/loftr_featuretransform.png)| **ⅱ. Coarse-Level Local Feature Transform**<br>$\quad$ **◆ Flatten + Positional Encoding**<br> $\quad \;\, \rightarrow$ DeTR과 비슷한 방식으로 Transfomer의 입력을<br> $\qquad \;$ 위한 준비과정<br> $\quad$ **◆ LoFTR Module**<br>$\quad\;\, \rightarrow$ Self Attention으로 Patch내의 주요 특징 추출<br> $\quad\;\, \rightarrow$ Cross Attention으로 Image Matching Pair 생성<br><br> $\therefore$ ($\frac{1}{2}H, \frac{1}{2}W$)의 Coarse한 Feature로부터<br>$\quad$ Feature Vector를 구함<br>$\,$ |
+> | ![alt text](/assets/img/post/computer_vision/loftr_matching.png)| **ⅲ. Matching Module**<br>$\quad$ **◆ Differentiable Matching Layer**<br>$\quad\;\, \rightarrow$ 두 Feature Vector의 유사도를 계산하여<br> $\qquad \;$ Confidence Matrix를 만듦<br>$\quad$ **◆ Confidence Matrix**<br>$\quad\;\, \rightarrow$ i가 J와 Matching될 확률(대칭행렬은 아님) |
+> | ![alt text](/assets/img/post/computer_vision/loftr_coarsetofine.png)| **ⅳ. Coarse-to-Fine Module**<br>$\quad$ ◆ Crop<br>$\quad\;\, \rightarrow$ 처음에 얻은 ($\frac{1}{2}H, \frac{1}{2}W$)의 두 Feature Map에서<br> $\qquad\;$ i, j Pixel을 중심으로한 Patch를 Crop <br> $\quad$ ◆ LoFTR Module<br> $\quad\;\, \rightarrow$ 두 Patch간의 유사도 검증 |
+>
+> &#8251; Coarse: 조잡한(정제되지 않은?)
+>
+> ---
+> #### [Paper3: COTR](https://arxiv.org/pdf/2103.14167)
+>
+> ![alt text](/assets/img/post/computer_vision/cotr.png)
+>
+> - 중간에 Concatenate하고 Self Attention을 해줌으로써 Cross Attention(Image Matching)의 효과를 얻을 수 있음
+> - Matching Point인 x'을 찾기위해 x를 Query로 사용

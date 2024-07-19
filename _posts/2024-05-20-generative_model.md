@@ -1,5 +1,5 @@
 ---
-title: "2. Generative Model"
+title: "3. Generative Model"
 date: 2024-05-20 22:00:00 +0900
 categories: ["Artificial Intelligence", "Computer Vision"]
 tags: ["vae", "gan"]
@@ -113,13 +113,4 @@ $\phi \rightarrow \text{Discriminator 관련}$
 $\therefore\;$ 다시말해 **Discriminator**는 가짜데이터를 잘 분류하도록,<br> 
 $\quad$ **Generator**는 Discriminator가 가짜를 구분하지 못하도록 학습한다.
 
-
----
----
-### 1) VQ-VAE
-
-![alt text](/assets/img/post/deeplearning_basic/vqvae.png)
-
-### 2) Cycle VAE
-
-![alt text](/assets/img/post/deeplearning_basic/cyclevae.png)
+## 3. Diffusion
