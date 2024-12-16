@@ -22,8 +22,8 @@ use_math: true
 
 - **인하대학교**
 (2018.03 ~ 2024.08)
-    - 정보통신공학과 (현재 4학년 2학기 재학중)
-    - GPA: 4.04/4.5, (전공 4.16)
+    - 정보통신공학과
+    - GPA: 4.1/4.5, (전공 4.16)
     - English: (TOEIC 850)
 
 **관심분야**
@@ -80,6 +80,7 @@ use_math: true
 - 주관: 현대엔지비
 - 내용: 자율 주행 트랙 수료
     - 인지, 판단, 제어, 통신 기초 과정
+    - [link](https://uijinee.github.io/categories/concept/)
 
 **(2022.09 ~ 2023.02) Boostcamp AI Tech 4th**
 
@@ -108,9 +109,9 @@ use_math: true
 | --- | --- | --- | --- |
 | 1 | **데이터베이스 설계, 데이터베이스(A+, A+)**<br> - C++로 B+Tree를 사용하는 Database구현<br> - MySQL을 사용해 CRUD가 적용된 병원예약 시스템 구현<br>(Transaction, Index적용)<br> | **디지털 영상처리 설계(A+)**<br> - Image Processing, Template Matching, Stitching<br> - Warping, Transform, Edge Detection, Color이론<br> - Filter, Segmentation, Computational Photograpy | **일반수학 1, 2(A+, A0)** |
 | 2 | **알고리즘 설계(A+)**<br> - 시간복잡도를 기준으로 올바른 알고리즘 학습 | **다학년 연구 프로젝트**<br> - ERP42-mini를(스케일카) 사용해 카메라 기반<br> $\;$주행 알고리즘(Lane Keeping) 개발 | **공업수학 1, 2(A+, A+)** |
-| 3 | **자료구조론(A0)**<br> - Stack, Queue, Deque, Tree, Hash, … | **기초 컴퓨터비전 이론 및 응용(수강 중)** | **선형대수(A0)** |
-| 4 | **오퍼레이팅 시스템(A+)**<br> - Gentoo Linux 2.6의 Interrupt, Process등 5계층 분석 | **인공지능(수강 중)** | **확률 변수론(A+)** |
-| 5 | **인터넷 프로토콜(A0)**<br> - Wireshark, OSI 7계층, 프로토콜, 라우팅, 블록체인기초, … | **데이터과학(수강 중)** | **볼록 최적화 입문(수강 중)** |
+| 3 | **자료구조론(A0)**<br> - Stack, Queue, Deque, Tree, Hash, … | **기초 컴퓨터비전 이론 및 응용(고려대 학점교류, A0)** | **선형대수(A0)** |
+| 4 | **오퍼레이팅 시스템(A+)**<br> - Gentoo Linux 2.6의 Interrupt, Process등 5계층 분석 | **인공지능(고려대 학점교류, A0)** | **확률 변수론(A+)** |
+| 5 | **인터넷 프로토콜(A0)**<br> - Wireshark, OSI 7계층, 프로토콜, 라우팅, 블록체인기초, … | **데이터과학(고려대 학점교류, A+)** | **볼록 최적화 입문(고려대 학점교류, A+)** |
 
 ## 🛠 Skills
 
