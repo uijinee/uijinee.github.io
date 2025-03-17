@@ -1,5 +1,5 @@
 ---
-title: "5-1. Unconstrained Optimization"
+title: "5-1. Unconstrained Optimization(Line search)"
 date: 2025-03-10 12:00:00 +0900
 categories: ["Math", "Convex Optimization"]
 tags: ["math"]
@@ -309,7 +309,7 @@ $$
 > 
 > 위 식에서 $Q$가 대칭임을 가정하면 이 고유벡터들이 서로 직교하고, 최적해 $x^\*$에서 $f(x)$는 $f(x) = \frac{1}{2}(x - x^\*)^T Q (x - x^\*) + \text{상수} = \frac{1}{2}(x - x^\*)^T V \Lambda V (x - x^\*) + \text{상수}$와 같이 쓸 수 있다. 즉, $f$의 등고선은 $Q$의 고유벡터 방향에 따라 정렬된 타원체라는 것을 알 수 있다. 이는 $f$의 이차 형식을 Q의 고유벡터 기준으로 보았을 때, 등고선이 각각의 고유벡터 방향으로 늘어난 타원 형태를 이룬다는 것을 의미한다.
 >
-> 이제 위 사례에서 steepest descent의 step을 살펴보면, $\nabla_\alpha f(x) = 0$이 되는 값만큼으로 step을 결정한다.<br>
+> 이제 위 사례에서 steepest descent의 step을 살펴보면, $\nabla f(\alpha) = 0$이 되는 값으로 step을 결정한다.<br>
 >
 > $$
 > \alpha_k = \frac{\nabla f_k^T \nabla f_k}{\nabla f_k^T Q \nabla f_k} \\
@@ -702,9 +702,3 @@ $$
 - steepest descent & newton/quasi-newton<br>
  : $\alpha_0 = \frac{2 (f_k - f_{k-1})}{\phi'(0)}$<br>
  (질문: 유도 과정이 이해안됨)
-
----
----
-## 4. Trust regioin 알고리즘
-
-(pass)
