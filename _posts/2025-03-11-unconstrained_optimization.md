@@ -94,7 +94,7 @@ $$
 > ---
 > 
 > 귀류법을 통해 위 식을 증명할 수 있다.<br>
-> 즉, 만약 $$x^*$$가 local minima라고 할 때, $$nabla f(x^*) \neq 0$$이라고 하자.<br>
+> 즉, 만약 $$x^*$$가 local minima라고 할 때, $$\nabla f(x^*) \neq 0$$이라고 하자.<br>
 > 이때, $$p = - \nabla f(x^*)$$라고 정의하면, $$p^T \nabla f(x^*) < 0$$이다. 또한 $\nabla f$가 $$x^*$$근처에서 연속임을 가정했으므로 $$p^T \nabla f(x^* + tp) < 0$$이 성립하는 $t \in [0, T]$가 존재한다.
 > 
 > 여기에 Taylor's theorem을 활용하면 다음과 같은 식을 얻을 수 있다.
@@ -115,6 +115,8 @@ $$
 > 마찬가지로 귀류법을 통해 위 식을 증명할 수 있다.<br>
 > 만약, $$\nabla^2 f(x^*)$$가 PSD가 아니라면, 우리는 $$p^T \nabla^2 f(x^*) p < 0$$인 점을 선택할 수 있다. 이때, $\nabla^2 f$가 $$x^*$$근처에서 연속임을 가정했으므로 $$p^T \nabla f(x^* + tp) p< 0$$이 성립하는 $t \in [0, T]$가 존재한다.
 >
+> 또한 First-order condition을 적용하면 $\nabla f(x^\*)$를 활용할 수 있다.
+>
 > 여기에 Taylor's theorem을 활용하면 다음과 같은 식을 얻을 수 있다.
 > 
 > $$
@@ -127,12 +129,12 @@ $$
 ### 4) Second-order Sufficient conditions
 
 > $$
-> \nabla^2 f \text{ is 존재/연속}, \nabla f(x^*) = 0, \nabla^2 f(x^*) \succeq 0 \rightarrow x^* \text{ is strict local minima}
+> \nabla^2 f \text{ is 존재/연속}, \nabla f(x^*) = 0, \nabla^2 f(x^*) \succ 0 \rightarrow x^* \text{ is strict local minima}
 > $$
 >
 > ---
 > 
-> $\nabla f$가 $$x^*$$에서 연속임이고 PSD이기 때문에, 우리는 $\nabla^2 f(x)$가 PSD로 정의되는 정의역(ball) $\mathcal{D} = \begin{Bmatrix}z \vert \Vert z-x^* \Vert < r\end{Bmatrix}$이 성립하는 $r > 0$을 찾을 수 있다.
+> $\nabla^2 f$가 $$x^*$$에서 연속임이고 PD이기 때문에, 우리는 $r > 0$에서 $\nabla^2 f(x)$가 PD로 정의되는 정의역(ball) $\mathcal{D} = \begin{Bmatrix}z \vert \Vert z-x^* \Vert < r\end{Bmatrix}$을 찾을 수 있다.
 >
 > 이제 여기서 $\Vert p \Vert < r$이 성립하는 nonzero vector p가 있을 때, $p^T \nabla f(z) p > 0$이므로 다음이 성립한다.
 >
@@ -466,7 +468,7 @@ $$
 
 위에서 보았다 싶이 Newton's method는 매력적인 방법이지만 계산비용이 크다는 단점이 있었다. 이에 이를 해결하기 위한 여러가지 방법이 제안 되었고 이 중 Quasi-newton's method 방법을 알아보자.
 
-### 3) Quasi-Newton's method
+### 4) Quasi-Newton's method
 
 Quasi-newton 방식은 Hessian $\nabla^2 f_k$을 직접 구하지 않고 $B_k$라는 근사 행렬을 사용한다. 이때 $B_k$는 각 step마다 업데이트 된다.
 
@@ -692,20 +694,14 @@ $$
  : $\alpha_0 = 1$<br>
  (1로 잡아야 해 근처에서 빠르게 수렴하는 특성이 발휘된다.)
 
-- steepest descent<br>
+- steepest descent(1)<br>
  : $\alpha_0 = \alpha_{k-1} \frac{\nabla f(x_{k-1})^T p_{k-1}}{\nabla f(x_k)^Tp_k}$<br>
- (이전 반복에서의 함수값 변화와 기울기 정보를 사용해 현재 반복에서의 $\alpha_0$을 결정하는 방식이다.)
+ (이전 반복에서의 함수값 변화와 기울기 정보가 현재 반복에서와 비슷할 것이라는 추측을 통해 결정하는 방식이다. <br>
+  $\rightarrow \alpha_0 \nabla f_k^T p_k = \alpha_{k-1} \nabla f_{k-1}^T p_{k-1}$)
 
-### --Convergence--
-
-Line search 알고리즘이 결국 $\nabla f_k = 0$ 인 안정점으로 수렴한다는 것은 Zoutendijk 정리에 의해 증명이 가능하다. 이때 수렴한다는 것이 최소점에 도달한다는 것이 아니라 $\nabla f_k = 0$ 인 점임을 유의하자.
-
-이를 위해서 필요한 조건들은 다음과 같다.
-- (a) 라인 서치가 충분한 Armijo 조건과 Curvature 조건, 그리고 Wolfe, Goldstein을 만족하는 것이 중요하다.
-- (b) 탐색 방향 $p_k$가 음의 기울기를 갖고, 현재 위치에서의 기울기와 지나치게 직교하지 않음이 보장되어야 한다.
-- (c) Newton/Quasi-Newton 계열에서는 Hessian 근사 $B_k$가 양의 정부호이고 조건수가 유한해야 한다.
-
-
+- steepest descent & newton/quasi-newton<br>
+ : $\alpha_0 = \frac{2 (f_k - f_{k-1})}{\phi'(0)}$<br>
+ (질문: 유도 과정이 이해안됨)
 
 ---
 ---
