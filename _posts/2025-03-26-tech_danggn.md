@@ -1,6 +1,6 @@
 ---
 title: "[Tech Review] 당근마켓 ML"
-date: 2025-03-26 12:00:00 +0900
+date: 2025-08-26 12:00:00 +0900
 categories: ["Artificial Intelligence", "tech review"]
 tags: ["tech review", "ml"]
 use_math: true
