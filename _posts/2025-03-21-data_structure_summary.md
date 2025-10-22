@@ -1,5 +1,5 @@
 ---
-title: "Summary"
+title: "0. Summary"
 date: 2025-03-21 12:00:00 +0900
 categories: ["Computer Science", "Data Structure"]
 tags: ["cs", "data structure"]
