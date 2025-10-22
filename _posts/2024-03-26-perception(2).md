@@ -1,7 +1,7 @@
 ---
 title: "3. Perception(2)"
 date: 2024-03-26 09:00:00 +0900
-categories: ["Autonomous Driving", "Concept"]
+categories: ["Domain Knowledge", "Autonomous Driving"]
 tags: ["autonomous driving", "perception"]
 use_math: true
 ---
