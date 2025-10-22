@@ -97,7 +97,7 @@ use_math: true
 > - 연속된 같은 종류의 unit field를 조합해 Compound field 후보 생성(keyword가 꼭 단일 바이트일 필요는 없기 때문에)
 > - 이때, 클라이언트옹 필드 후보와 서버용 필드 후보를 따로 생성
 >
-> ※ 0 byte < 후보군 크기제한 < 10 byte
+> ※ 0 byte $<$ 후보군 크기제한 $<$ 10 byte
 >
 > 3. Probabilistic Keyword Identification
 > 
