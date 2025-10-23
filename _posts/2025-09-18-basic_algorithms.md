@@ -50,6 +50,26 @@ $\frac{A}{B} = Q$와 나머지 $R$을 가질 때, $A \bmod B = R$이다.
 > - CRT<br>
 >   (가정) $a \equiv b \pmod p$ 이고 $a \equiv b \pmod q$ 이고 $\gcd(p, q) = 1$<br>
 >   (결과) $a \equiv b \pmod pq$
+>
+> ---
+> #### 예제
+>
+> $$
+> c = m^e \bmod n 
+> $$
+>
+> $e = 10, n = 15, m = 3$ 일때, 위의 식을 만족하는 $c$를 구하라.
+>
+> $e = 10 = \[1, 0, 1, 0]]$
+>
+> | i | e | z |
+> | --- | --- | --- |
+> | 3 | 1 | $1^2 \cdot 3 \bmod 15$ |
+> | 2 | 0 | $3^2 \bmod 15$ |
+> | 1 | 1 | $9^2 \cdot 3 \bmod 15$ |
+> | 0 | 0 | $3^2 \bmod 15$ |
+> 
+> ∴ 답: 15
 
 
 ## 2. 기타 공식들
@@ -113,3 +133,55 @@ a = 252와 b = 198일 때 $ax + by = \gcd(a, b)$를 만족하는 x, y를 찾아�
 ---
 # Ancient Cipher
 
+## Concept
+
+- Symmetric Key Cipher<br>
+: $D_k(E_k(x)) = E_k(D_k(x)) = x$
+
+- Kerchoff's Principle<br>
+: 항상 공격자가 암호화/복호화 알고리즘을 알고있다고 가정해야 하고, 오직 Key의 비밀성에 의해서만 암호의 내성을 평가해야 한다.
+
+## 1. Transposition Cipher
+
+### 1) Rail fence Cipher
+
+plain text: "meet meat the park"
+
+![alt text](/assets/img/post/cryptography/railfence_cipher.png)
+
+### 2) Permutation key Cipher
+
+plain text: "enemy attac kston ightz"
+
+![alt text](/assets/img/post/cryptography/permutationkey_cipher.png)
+
+cipher text: "eemyn taact tkons hitzg"
+
+## 2. Substitution Cipher
+
+### 1) Additive Cipher
+
+- monoalphabetic cipher
+
+![alt text](/assets/img/post/cryptography/additive_cipher.png)
+
+### 2) Multiplicative Cipher
+
+- monoalphabetic cipher
+
+![alt text](/assets/img/post/cryptography/multiplicative_cipher.png)
+
+### 3) Affine Cipher
+
+![alt text](/assets/img/post/cryptography/affine_cipher.png)
+
+### 4) Permutation Cipher
+
+- monoalphabetic cipher
+- Frequency analysis
+
+![alt text](/assets/img/post/cryptography/permutation.png)
+
+### 5) Vigenere Cipher
+
+![alt text](/assets/img/post/cryptography/virgenere_cipher.png)
