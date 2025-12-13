@@ -400,7 +400,7 @@ AES등 Symmetric Encryption의 경우 매우 암호화/복호화 속도가 매�
 >
 > ⅰ. 매우 큰 소수 n 선택
 >
-> ⅱ. $d \in [1, n-2], e_1 \in \mathbf{Z}_n^\ast$ 선택
+> ⅱ. $d \in [1, n-1], e_1 \in \mathbf{Z}_n^\ast$ 선택
 >
 > ⅲ. $e_2 = e_1^d \bmod n$
 >
@@ -434,7 +434,7 @@ MAC은 대칭키 시스템을 사용하기 때문에 Signature역할을 하지 �
 $s = H(m)^d \bmod n$
 
 - Verification algorithm<br>
-$s^e \equiv H(m) \pmod n$
+$s^e \equiv H(m)^e \pmod n$
 
 ※ Public Key: `[e, n]`<br>
 ※ Private Key: `[d, n]`
@@ -457,13 +457,13 @@ $s^e \equiv H(m) \pmod n$
 ### 2) DSA Signature
 
 - Signing algorithm<br>
-ⅰ) $k \in \[1, n-2\]$이고, $\gcd(k, p-1) = 1$ (p-1과 서로소인 k)를 선택<br>
+ⅰ) $k \in \[1, n-1\]$이고, $\gcd(k, n-1) = 1$ (n-1과 서로소인 k)를 선택<br>
 ⅱ) $r \equiv e_1^k \bmod n$ 계산<br>
 ⅲ) $s = (h(m) - dr)k^{-1} \bmod (n - 1)$ 계산<br>
-$\Rightarrow$ Signature = $(R, s)$
+$\Rightarrow$ Signature = $(r, s)$
 
 - Verifying algorithm<br>
-: $e_1^h(m) \equiv e_2^rr^s \bmod n$인지 확인
+: $e_1^{h(m)} \equiv e_2^rr^s \bmod n$인지 확인
 
 ※ Elgamal을 이용한 Signature
 

@@ -1,10 +1,16 @@
 ---
-title: "2. Protocol Reverse Engineering"
+title: "2. Protocol Reverse Engineering(NetT)"
 date: 2025-09-24 10:00:00 +0900
 categories: ["Domain Knowledge", "Cybersecurity"]
 tags: ["pre", "protocol", "reverse engineering", "protocol reverse engineering"]
 use_math: true
 ---
+
+> Protocol reverse engineering (PRE) refers to the process of inferring the structure, semantics, and behavior of a communication protocol in the absence of official specifications or documentation
+>
+> - fuzzing
+> - network traffic classification
+> - 
 
 # Using Network Trace 
 
@@ -16,7 +22,6 @@ use_math: true
 
 ---
 ## Token Based Approach
-
 
 ### 1) Netzob
 
@@ -33,6 +38,31 @@ use_math: true
 > 가중치 없는 pair를 그룹하고 산술평균을 내는 계층적 클러스터링 알고리즘
 >
 > 어떤 메시지를 먼저 묶고, 어떤 순서로 클러스터를 합칠지 결정하는데 사용되는 알고리즘
+
+### 2) [Discoverer](https://www.usenix.org/conference/16th-usenix-security-symposium/discoverer-automatic-protocol-reverse-engineering-network)
+
+
+> #### Approach
+>
+> - Initial Clustering<br>
+> : "message pattern"을 기반으로 초기 cluster를 생성
+>
+> - Recursive Clustering<br>
+> : "message format"을 기반으로 초기 cluster를 split하고 merge하여 새로운 cluster생성
+>
+> - Merge with Type based Sequence Alignment<br>
+> : 위의 과정에서 cluster가 매우 많이 발생하기 때문에, "cluster format"을 활용해 cluster끼리 merging
+
+
+### 3) [NEMESYS](https://www.usenix.org/system/files/conference/woot18/woot18-paper-kleber.pdf)
+
+> #### Problem
+>
+> 기존 방식들은 multiple message를 비교하여 format을 추론하였지만, intrinsic structure를 이용하지는 않음.
+> 
+> ---
+> #### Background
+
 
 ### 3) [NetPlier](https://github.com/yapengye/NetPlier)
 
@@ -103,4 +133,105 @@ use_math: true
 > 
 > 
 
-### 4) [CNNPRE](https://ieeexplore.ieee.org/document/10287339)
+### 4) [PREUNN](https://www.scitepress.org/Papers/2022/108135/108135.pdf)
+
+- 문제점
+
+- Approach
+    - 
+
+- 내 생각
+    - binary protocol을 다루지 않음
+    - real world setting에서의 영향을 다루지 않음
+
+### 5) [CNNPRE](https://ieeexplore.ieee.org/document/10287339)
+
+- 문제점
+    - 입력이 unknown protocol의 경우 label이 없기 때문에, 비지도 학습(클러스터링)이 필요하지만 threshold에 따라 성능이 매우 바뀜
+    - 기존에는 정렬 방식을 주로 사용했는데, 이는 contextual information을 없앰
+    - pre proccessing에 domain knowlege 필요
+
+- 아이디어
+    - 라벨이 없어 unknown data에 활용 불가 → transfer learning
+    - alignment → generate 2D image
+    - traffic length + traffic direction를 feature로 활용해 domain 지식 없이 추론
+
+- Approach: PRE를 위한 Clustering 방식 제안
+    1. Data Preprocessing<br>
+    extract → calculate traffic characteristics(direct, length, ...) → convert to image (resize 224 $\times$ 224 with padding)
+    2. Feature extraction & Dimension reduction<br>
+    Densenet(for feature) & Uniform Manifold Approximation and Projection(for dim reduction)
+    3. Message type identification<br>
+    Hierarchical Density-Based Spatial Clustering of Applications with Noise clustering algorithm
+
+    ![alt text](/assets/img/post/cybersecurity/cnnpre.png)
+
+- 내 생각
+    - byte를 단순히 픽셀로 생각하기에는 무리가 있음 → 255를 넘어가는 값을 사용할 수도 있기 때문
+
+
+### 6) [ProsegDL](https://ieeexplore.ieee.org/document/9940264)
+
+- 문제점
+    - delimiter-based(e.g. discoverer): binary protocol은 field 경계를 표현하는 symbol(delimiter)이 없고, 길이도 너무 짧음
+    - alignment-based: 정렬 과정이 noise에 취약함
+    - probability-based: 사전지식이 필요하고 이를 기반으로 파라미터를 조정해야 함
+
+- 아이디어
+    - 패킷은 보통 header-payload 순으로 구성되고, header의 경우 보통 fixed length를 가짐
+    - 패킷을 쌓으면 이 fixed length 부분의 특징을 찾을 수 있음<br>
+    (inter field features: 필드 간 구분되는 특징, intra field features: 필드 내부의 특징) 활용
+    - protocol은 대부분 상속에 의해서 구현 됨 (generalize 가능)
+
+- Approach
+    - unet: intra field feature를 계산하는데 효과적인 architecture
+    - siamese network: inter field feature를 구분하는데 효과적인 architecture (필드간 유사도 계산 가능)<br>
+    (backbone(lstm-fcn): feature extraction for sequence data에 유리함.)
+    - cascade model: unet → siamese network
+
+- 내 생각
+    - 실제로는 netplier와 같이 패킷들을 클러스터링하여 분해하는 과정이 선행됨. 따라서, 이 클러스터링 결과에 매우 의존하게 됨.
+    - space packet/message가 섞여서 길이가 다양해져 header가 고정되지 않는 경우, 패킷을 쌓는 방식으로는 적용할 수 없다.<br>
+    (패턴이 매번 달라질 것이기 때문)
+    - 패킷을 쌓는 방식도, message가 섞여서 다양한 protocol을 한번에 인식하는 경우 적용하기 힘들 것 같다.<br>
+    (마찬가지로 패턴을 찾기 힘들 것임)
+    - binary pattern(e.g. header)과 text pattern(e.g. payload)가 명확할 때만 사용가능할 것 같다.<br>
+    만약 둘 중 하나만 사용하면 성능이 많이 떨어질 것 같다.(inter field feature계산 불가)
+
+
+### 8) [(2023 NDSS) BinaryInferno](https://www.ndss-symposium.org/wp-content/uploads/2023/02/ndss2023_s131_paper.pdf)
+
+> #### Idea
+> 
+> Engineer들은 보통 표준 encoding 방식을 반복해서 사용한다.(e.g. IEEE 754 부동소수점 수, Timestamp, TLV/LV Encoding)
+> 이러한 점을 활용하기 위해 다음 두가지 단서를 활용할 수 있다.
+> 
+> - 단일 메시지 내부의 정보: 특정 위치의 데이터가 정수/부동소수점인지.
+> - 여러 메시지들 사이의 정보: 여러 메시지 간, 수집된 단서들 간의 상관관계 분석
+> 
+> 이를 위해서 메시지 type을 식별하는 detector들을 만들어 이를 활용해보자.
+> 
+> ---
+> #### Approach
+>
+> 다음 Detector를 모든 위치에 대해 수행함으로써 전체 메시지에 대한 Description을 생성할 수 있다.
+> 
+> - Atomic Detector: 기초 field를 식별하는 탐지기
+>     - Float Detector<br>
+>       IEEE 754 형식은 [부호(1 bit), 지수(8 bit), 가수(32 bit)] 형태이다. 이때, 보통 실제 데이터에서는 여러 실수들이 동일한 지수값을 공유하고, 가수 부분만 다르다. 또한, 여러 메시지들에 대한 bit frequency를 보면, 지수 영역에 있는 1 bit 개수 빈도가 가수 영역에 있는 1 bit 빈도보다 더 많아지는 현상이 있다. (히스토그램을 그리면 L자 모양의 패턴 발생, unsigned int와 같은 데이터에서는 나타나지 않음)
+>     - Timestamp Detector<br>
+>       패킷 캡쳐 시작/종료 시간을 기반으로, 해당 슬라이스를 timestamp 형식으로 해석했을 때 범위 내에 있다면 timestamp 형식으로 추론(NTP & UNIX epoch timestamp formats)
+>     - Length Detector<br>
+>       여러 메시지들 중에서 특정 위치의 byte값과 전체 길이를 비교하여 결정할 수 있다. (한 cluster에서 2번 byte의 값이 [9, 10, 13]이고, 전체 길이가 [13, 14, 17] 이면 $L_i -x_i$의 값이 일정하므로 length field로 볼 수 있다.)
+>       
+> - Field Boundary Detector: 엔트로피 변화를 이용한 필드 경계 탐지기<br>
+> : 인접한 1byte slice간 shannon entropy 차이가 큰 곳을 경계로 추정
+> 
+> - Pattern Based Detector: 직렬화 패턴(TLV, LV)을 바탕으로 가변 길이 필드 추론<br>
+> : 가변 길이 필드에서 사용하는 주요 패턴은 LV(길이+값, e.g.`0x03 AABBCC`)과 TLV(타입+길이+값, e.g.`0x01 0x03 AABBCC`)이 있다. 이러한 패턴을 탐지하기 위해 iterative deepening DFS를 사용해 패턴 후보들을 찾는다.(깊이1(LV) → 깊이2(TLV) → 깊이3(QTLV) → ..., Q는 반복 횟수)
+> 
+>> 이때 가장 중요한 것은 여러 Detector가 동일 byte에 대해 서로 다른 주장을 할 경우 이를 통합하는 방법을 설계하는 것이다.
+>>
+>> 이를 해결하기 위해 DAG를 사용해 Conflict가 없는 field 조합을 찾는 문제로 전환시킬 수 있다.
+>> 
+>> 이러한 통합 알고리즘은 개별 Detector의 오류에 대해 강건한 system을 설계할 수 있게 만든다.

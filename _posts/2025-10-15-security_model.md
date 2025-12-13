@@ -15,6 +15,8 @@ use_math: true
 | CPA<br>(Chosen Plaintext Attacks) | ![alt text](/assets/img/post/cryptography/cpa.png)<br> ● Target ciphertext<br> ● Ciphertext of chosen plaintext |
 | CCA<br>(Chosen Ciphertext Attacks) | ![alt text](/assets/img/post/cryptography/cca.png)<br> ● Target ciphertext<br> ● Plaintext of chosen ciphertext |
 
+※ CPA랑 CCA에서 Oracle쪽 화살표 잘못그림...
+
 
 ## 1. Security Game
 
