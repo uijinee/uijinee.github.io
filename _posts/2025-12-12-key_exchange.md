@@ -45,20 +45,20 @@ use_math: true
 > ---
 > #### Types of Key Exchange
 >
-> - Key Transfer: 한쪽이 키를 생성해 암호화하여 상대방에게 보내주는 방식
+> - Key Transfer(Distribution): 한쪽이 키를 생성해 암호화하여 상대방에게 보내주는 방식
 > - Key Agreement: 양쪽이 정보를 주고받아 공동으로 키를 생성하는 방식(Diffie-Hellman)
 > - 패스워드 기반, 공개키 기반, 그룹 키 교환 등...
 
 ### 2) Diffie-Hellman
 
-| Diffie-Hellman | Encrypted Key Exchange |
+| Diffie-Hellman | W.t. Encrypted Key Exchange|
 | --- | --- |
 | ![alt text](/assets/img/post/cryptography/diffie_hellman.png) | ![alt text](/assets/img/post/cryptography/key_exchange_eke.png) |
 
 > 1. Alice<br>
->   : $x_A$를 개인 키로하여 $y_A = g^{x_A}$를 Bob에게 전송한다.
+>   : 개인키 $x_A$를 사용해 $y_A = g^{x_A}$를 만들어 Bob에게 전송한다.
 > 2. Bob<br>
->   : $x_B$를 개인 키로하여 $y_B = g^{x_B}$를 Alice에게 전송한다.
+>   : 개인키 $x_B$를 사용해 $y_B = g^{x_B}$를 만들어 Alice에게 전송한다.
 > 3. Session key 생성
 >   : Alice는 $Sk = (y_B)^{x_A} = g^{x_A \cdot x_B}$로 키를 생성한다.<br>
 >   : Bob은 $Sk = (y_A)^{x_B} = g^{x_A \cdot x_B}$로 키를 생성한다.
@@ -70,12 +70,12 @@ use_math: true
 > ---
 > #### Encrypted Key Exchange
 >
-> 만약 두 사람이 공유된 대칭 키를 가지고 있으면 다음과 같은 방식으로 FS에 강인한 키 교환 프로토콜을 만들 수 있다.
+> 만약 두 사람이 공유된 대칭 키($pw$)를 가지고 있으면 다음과 같은 방식으로 FS에 강인한 키 교환 프로토콜을 만들 수 있다.
 >
 > 1. Alice<br>
->   : $E_{sk}(g^a)$를 계산하여 Bob에게 전송(a는 Alice가 선택한 랜덤 값)
+>   : $E_{pw}(g^a)$를 계산하여 Bob에게 전송(a는 Alice가 선택한 랜덤 값)
 > 2. Bob<br>
->   : $E_{sk}(g^b)$를 계산하여 Alice에게 전송(b는 Bob이 선택한 랜덤 값)
+>   : $E_{pw}(g^b)$를 계산하여 Alice에게 전송(b는 Bob이 선택한 랜덤 값)
 > 3. Session Key 생성
 >   : Alice는 $Sk = (g^b)^a$로 키를 생성한다.<br>
 >   : Bob은 $Sk = (g^a)^b$로 키를 생성한다.<br>
@@ -99,10 +99,10 @@ BCK 프로토콜은 기본 Diffie-Hellman에 전자서명과 임시 키(a/b)를 
 > : Bob의 서명을 확인한 후, 자신의 전자서명 $S_{x_A}(g^a \Vert g^b)$를 Bob에게 전송
 >
 > 4. Session Key 생성<br>
-> : Alice는 $sk = (g^b)^a = g^{ab}$로 키를 생성
+> : Alice는 $sk = (g^b)^a = g^{ab}$로 키를 생성<br>
 > : Bob은 $sk = (g^a)^b = g^{ab}$로 키를 생성
 >
-> 이때, a, b, 는 바로 삭제되기 때문에 $x_A, x_B$가 노출되어도 $sk$를 알 수 없다.
+> 이때, a, b, 는 바로 삭제되기 때문에 $x_A, x_B$가 노출되어도 $sk$를 알 수 없다.(개인키는 전자서명 만드는 역할)
 >
 > - 취약점<br>
 > SSR: 키를 만드는 과정에서 사용된 난수가 노출되면 session key를 쉽게 복원당할 수 있다.
@@ -119,15 +119,15 @@ BCK 프로토콜은 기본 Diffie-Hellman에 전자서명과 임시 키(a/b)를 
 > : 임시 비밀값(난수) $b$를 선택하여 $g^b$를 만들어 Alice에게 전송한다.<br>
 > (이때, 대칭키를 활용해 데이터의 무결성을 보장하기 위한 $MAC_{K_m}(1)$을 함께 보냄)
 > 
-> 3. Session Key 생성<br>
+> 3. **Session Key 생성**<br>
 > ⅰ) 보조 값 계산 (Hash): $d = H(g^a || \text{Bob})$, $e = H(g^b || \text{Alice})$<br>
 > ⅱ) Alice는 다음과 같이 키를 생성<br>
 > $\quad$: 공유 비밀값 $\sigma = (g^b \cdot y_B^e)^{a + d x_A} = g^{(b + e x_B)(a + d x_A)}$<br>
 > $\quad$: 세션 키 $sk = H(\sigma || 1)$
 >
 > 4. Bob은 다음과 같이 키를 생성<br>
-> $\quad$: 공유 비밀값 $\sigma = (g^a \cdot y_A^d)^{b + e x_B} = g^{(a + d x_A)(b + e x_B)}$
-> $\quad$: 세션 키 $sk = H(\sigma || 1)$
+> : 공유 비밀값 $\sigma = (g^a \cdot y_A^d)^{b + e x_B} = g^{(a + d x_A)(b + e x_B)}$<br>
+> : 세션 키 $sk = H(\sigma \Vert 1)$
 >
 > 이 경우, 세션 키를 생성할 때 난수와 비밀키를 같이 활용하기 때문에 SSR에 안전하다.<br>
 > 
@@ -226,7 +226,7 @@ BCK 프로토콜은 기본 Diffie-Hellman에 전자서명과 임시 키(a/b)를 
 >   역할: 사용자의 ID와 자신의 Secret Key를 가지고 사용자의 Secret Key($sk$)를 발급
 >
 > - 송신자<br>
->   자산: 임의의 난수($r$)를 생성하여 사용
+>   자산: 임의의 난수($r$)를 생성하여 사용<br>
 >   역할: KGC의 Public Key와 사용자의 ID, 난수 r을 가지고 메시지를 암호화
 > 
 > - 수신자(사용자)<br>
